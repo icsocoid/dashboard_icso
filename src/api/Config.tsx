@@ -2,13 +2,13 @@ import axios from 'axios';
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 
 const BASE_URL = "http://icso-emailappservice-pnznmf-35b4d1-103-195-191-110.traefik.me/api/email"
-const API_URL = "https://hrdapi.icso.biz.id/public/api"; //Login Auth API
+const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 
 // ====================
 // 🔐 Auth API
 // ====================
 export async function loginUser(username: string, password: string) {
-    const response = await axios.post(`${API_URL}/user/login`, {
+    const response = await axios.post(`${API_URL}/login-form`, {
         username,
         password,
     });

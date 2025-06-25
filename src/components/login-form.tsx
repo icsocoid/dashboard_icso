@@ -21,7 +21,8 @@ export function LoginForm({
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("name", data.user.id);
+      localStorage.setItem("id", data.user.employee_name);
       navigate("/dashboard");
     } catch (err) {
       setError("Login gagal. Periksa email/password.");
