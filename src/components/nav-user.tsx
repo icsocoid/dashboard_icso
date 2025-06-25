@@ -41,7 +41,9 @@ export function NavUser({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("name");
+    localStorage.removeItem("id");
+    localStorage.removeItem("email");
     navigate('/login');
   };
 
