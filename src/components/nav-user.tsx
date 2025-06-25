@@ -41,7 +41,7 @@ export function NavUser({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("name");
+    localStorage.clear();
     navigate('/login');
   };
 
