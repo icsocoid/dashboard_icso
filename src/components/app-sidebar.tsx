@@ -25,14 +25,14 @@ import {
 } from "@/components/ui/sidebar"
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: `${localStorage.getItem("name")}`,
+    email: `${localStorage.getItem("email")}`,
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/",
       icon: LayoutDashboardIcon,
     },
     {

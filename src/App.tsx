@@ -26,15 +26,6 @@ const App: React.FC = () => {
                 />
 
                 <Route
-                    path="/dashboard"
-                    element={
-                        <PrivateRoute>
-                            <Dashboard />
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
                     path="/email-template-add"
                     element={
                         <PrivateRoute>

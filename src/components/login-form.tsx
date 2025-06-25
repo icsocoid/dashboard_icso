@@ -23,6 +23,7 @@ export function LoginForm({
       const data = await loginUser(email, password);
       localStorage.setItem("name", data.karyawan.id);
       localStorage.setItem("id", data.karyawan.employee_name);
+      localStorage.setItem("email", data.karyawan.email);
       navigate("/dashboard");
     } catch (err) {
       setError("Login gagal. Periksa email/password.");
