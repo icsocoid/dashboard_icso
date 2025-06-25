@@ -21,8 +21,8 @@ export function LoginForm({
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      localStorage.setItem("name", data.karyawan.id);
-      localStorage.setItem("id", data.karyawan.employee_name);
+      localStorage.setItem("name", data.karyawan.employee_name);
+      localStorage.setItem("id", data.karyawan.id);
       localStorage.setItem("email", data.karyawan.email);
       navigate("/dashboard");
     } catch (err) {
