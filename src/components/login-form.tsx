@@ -24,7 +24,7 @@ export function LoginForm({
       localStorage.setItem("name", data.karyawan.employee_name);
       localStorage.setItem("id", data.karyawan.id);
       localStorage.setItem("email", data.karyawan.email);
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       setError("Login gagal. Periksa email/password.");
     }
