@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 
-const BASE_URL = "https://emailapi.als.today/api/api/email"
+const BASE_URL = "https://emailapi.als.today/api/email"
 const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 
 // ====================
