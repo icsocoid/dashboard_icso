@@ -7,11 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {loginUser} from "@/api/Config.tsx";
 
-export function LoginForm({
-                            className,
-                            ...props
-                          }: React.ComponentProps<"div">) {
-
+export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
