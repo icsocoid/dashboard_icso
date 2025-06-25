@@ -1,0 +1,98 @@
+import React, { useEffect, useRef, useState } from 'react';
+import TemplateForm from '@/components/TemplateEmailForm';
+import {saveTemplate, getTemplateById, updateTemplate} from '@/api/Config.tsx';
+import EmailEditor, { type EditorRef } from 'react-email-editor';
+import {AppSidebar} from "@/components/app-sidebar.tsx";
+import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
+import {toast} from "react-toastify";
+import {SiteHeader} from "@/components/site-header.tsx";
+
+interface Props {
+    templateId?: number;
+}
+
+const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
+    const [code, setCode] = useState('');
+    const [subject, setSubject] = useState('');
+    const editorRef = useRef<EditorRef>(null);
+
+    // Load template saat komponen mount
+    useEffect(() => {
+        if (templateId) {
+            (async () => {
+                const template = await getTemplateById(templateId);
+                if (template) {
+                    setCode(template.code);
+                    setSubject(template.subject);
+
+                    const checkEditorReady = setInterval(() => {
+                        const editor = editorRef.current?.editor;
+
+                        // pastikan editor siap dan ada method loadDesign
+                        if (editor && typeof editor.loadDesign === 'function') {
+                            try {
+                                const design = JSON.parse(template.template);
+                                editor.loadDesign(design);
+                            } catch (err) {
+                                console.error("❌ Gagal parsing JSON design:", err);
+                            }
+                            clearInterval(checkEditorReady);
+                        }
+                    }, 500);
+                }
+            })();
+        }
+    }, [templateId]);
+
+    const handleSaveTemplate = async (html: string, json: string ) => {
+
+        if (!code || !subject) {
+            alert('Code dan Subject tidak boleh kosong.');
+            return;
+        }
+
+        const result = templateId
+            ? await updateTemplate(templateId, code, subject, html, json)
+            : await saveTemplate(code, subject, html, json);
+
+
+        if (result.status) {
+            toast.success("Template berhasil disimpan!");
+            setTimeout(() => window.location.reload(), 3000);
+        } else {
+            toast.error("Gagal menyimpan template: " + result.message);
+        }
+    };
+
+    return (
+        <SidebarProvider>
+            <AppSidebar variant="inset" />
+            <SidebarInset>
+                <SiteHeader title={"Edit Email Template"} />
+
+                <div style={{ padding: 20 }}>
+                    <TemplateForm
+                        code={code}
+                        subject={subject}
+                        onCodeChange={setCode}
+                        onSubjectChange={setSubject}
+                    />
+                    <EmailEditor ref={editorRef} style={{ height: 580 }} />
+                    <div style={{ marginTop: 20 }}>
+                        <button
+                            onClick={() => {
+                                if (editorRef.current?.editor) {
+                                    editorRef.current.editor.exportHtml((data) => handleSaveTemplate(data.html, JSON.stringify(data.design)));
+                                }
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200">
+                            Simpan Template
+                        </button>
+                    </div>
+                </div>
+            </SidebarInset>
+        </SidebarProvider>
+    );
+};
+
+export default EmailTemplateEditor;
