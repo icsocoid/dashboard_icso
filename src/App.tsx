@@ -4,8 +4,9 @@ import LoginPage from "@/pages/login/LoginPage.tsx";
 import PrivateRoute from "@/components/PrivateRoute.tsx";
 import EmailTemplateEditor from "@/pages/email/EmailTemplateEditor.tsx";
 import EmailEditor from "@/pages/email/EmailEditor.tsx";
-import React from "react";
 import EmailTemplate from "@/pages/email/EmailTemplate.tsx";
+import React from "react";
+import PlanFormPage from "@/pages/plan/PlanFormPage.tsx";
 
 const App: React.FC = () => {
 
@@ -48,6 +49,15 @@ const App: React.FC = () => {
                     element={
                         <PrivateRoute>
                             <EmailTemplate />
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/plan-form"
+                    element={
+                        <PrivateRoute>
+                            <PlanFormPage />
                         </PrivateRoute>
                     }
                 />

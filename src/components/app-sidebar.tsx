@@ -114,7 +114,7 @@ const data = {
   management: [
     {
       name: "Plan",
-      url: "/plan-form",
+      url: "#",
       icon: StampIcon,
     },
     {
@@ -126,6 +126,10 @@ const data = {
       name: "Payment",
       url: "#",
       icon: DollarSignIcon,
+    },{
+      name: "Subscription",
+      url: "#",
+      icon: RssIcon,
     },
   ],
 }
