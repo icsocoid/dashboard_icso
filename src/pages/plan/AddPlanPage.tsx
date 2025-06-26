@@ -1,9 +1,9 @@
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SiteHeader} from "@/components/site-header.tsx";
-import PlanForm from "@/components/plan-form.tsx";
+import PlanForm from "@/components/add-plan.tsx";
 
-export default function PlanFormPage() {
+export default function AddPlanPage() {
     return (
         <SidebarProvider>
             <AppSidebar variant="inset" />
