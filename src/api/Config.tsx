@@ -20,15 +20,19 @@ export async function loginUser(username: string, password: string) {
 // 📩 Email Template APIs
 // ====================
 
-export const AllEmailTemplates = async (): Promise<IntEmailTemplate[] | null> => {
+export const AllEmailTemplates = async (page: number, size: number): Promise<{ data: IntEmailTemplate[]; total: number } | null> => {
     try {
-        const res = await axios.get(`${BASE_URL}/all`)
-        return res.data?.data?.data ?? null
+        const res = await axios.get(`${BASE_URL}/all?page=${page}&per_page=${size}`);
+        return {
+            data: res.data?.data?.data ?? [],
+            total: res.data?.data?.total ?? 0,
+        };
     } catch (error) {
-        console.error("Gagal mengambil semua template:", error)
-        return null
+        console.error("Gagal mengambil semua template:", error);
+        return null;
     }
 }
+
 
 export const saveTemplate = async (
     code: string,

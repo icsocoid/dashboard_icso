@@ -6,7 +6,7 @@ import EmailTemplateEditor from "@/pages/email/EmailTemplateEditor.tsx";
 import EmailEditor from "@/pages/email/EmailEditor.tsx";
 import EmailTemplate from "@/pages/email/EmailTemplate.tsx";
 import React from "react";
-import PlanFormPage from "@/pages/plan/PlanFormPage.tsx";
+import AddPlanPage from "@/pages/plan/AddPlanPage.tsx";
 
 const App: React.FC = () => {
 
@@ -57,7 +57,7 @@ const App: React.FC = () => {
                     path="/plan-form"
                     element={
                         <PrivateRoute>
-                            <PlanFormPage />
+                            <AddPlanPage />
                         </PrivateRoute>
                     }
                 />

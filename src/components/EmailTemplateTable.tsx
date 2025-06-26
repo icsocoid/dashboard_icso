@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { deleteTemplate } from "@/api/Config.tsx"
+import { AllEmailTemplates, deleteTemplate } from "@/api/Config.tsx"
 import {toast} from "react-toastify";
 import { useState } from "react"
 
@@ -49,9 +49,7 @@ import {
 } from "@/components/ui/table"
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 
-type Props = { templates: IntEmailTemplate[] }
-
-export default function EmailTemplateTable({ templates }: Props) {
+export default function EmailTemplateTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -59,6 +57,13 @@ export default function EmailTemplateTable({ templates }: Props) {
     const navigate = useNavigate()
     const [openDialog, setOpenDialog] = useState(false)
     const [selectedId, setSelectedId] = useState<number | null>(null)
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize: 10,
+    })
+    const [data, setData] = React.useState<IntEmailTemplate[]>([])
+    const [totalItems, setTotalItems] = React.useState(0)
+    const [loading, setLoading] = React.useState(false)
 
     const columns: ColumnDef<IntEmailTemplate>[] = [
         {
@@ -142,23 +147,47 @@ export default function EmailTemplateTable({ templates }: Props) {
         },
     ]
 
+    React.useEffect(() => {
+        const fetchTemplates = async () => {
+            setLoading(true)
+            setRowSelection({})
+            const page = pagination.pageIndex + 1
+            const result = await AllEmailTemplates(page, pagination.pageSize)
+
+            if (result) {
+                setData(result.data)
+                setTotalItems(result.total)
+            } else {
+                console.error("Gagal mengambil data template")
+            }
+
+            setLoading(false)
+        }
+
+        fetchTemplates()
+    }, [pagination])
+
     const table = useReactTable({
-        data: templates,
+        data: data,
         columns,
+        manualPagination: true,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        pageCount: Math.ceil(totalItems / pagination.pageSize),
+        onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination,
         },
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
     })
 
     const handleDeleteTemplate = (id: number) => {
@@ -213,7 +242,7 @@ export default function EmailTemplateTable({ templates }: Props) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            Columns <ChevronDown className="ml-2 h-4 w-4"/>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -257,7 +286,11 @@ export default function EmailTemplateTable({ templates }: Props) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -283,24 +316,51 @@ export default function EmailTemplateTable({ templates }: Props) {
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="text-muted-foreground flex-1 text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
+            <div className="flex items-center justify-between py-4">
+                <div className="text-muted-foreground text-sm">
+                    {table.getFilteredSelectedRowModel().rows.length} dari {data.length} data dipilih.
+                    <select
+                        className="text-sm border rounded p-1 ms-2"
+                        value={pagination.pageSize}
+                        onChange={(e) =>
+                            setPagination((prev) => ({
+                                ...prev,
+                                pageSize: Number(e.target.value),
+                                pageIndex: 0, // reset ke halaman pertama
+                            }))
+                        }
+                    >
+                        {[5, 10, 20, 50].map((size) => (
+                            <option key={size} value={size}>
+                                {size}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <div className="space-x-2">
+
+
+                <div className="flex items-center gap-2">
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
+                        disabled={table.getState().pagination.pageIndex === 0}
                     >
                         Previous
                     </Button>
+
+                    <span className="text-sm text-muted-foreground">
+                      Halaman {table.getState().pagination.pageIndex + 1} dari {Math.ceil(totalItems / pagination.pageSize)}
+                    </span>
+
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
+                        disabled={
+                            table.getState().pagination.pageIndex + 1 >=
+                            Math.ceil(totalItems / pagination.pageSize)
+                        }
                     >
                         Next
                     </Button>
