@@ -7,6 +7,7 @@ import { NumericFormat } from "react-number-format";
 import {getPlanById, savePlan, updatePlan} from "@/api/Config.tsx";
 import {toast} from "react-toastify";
 
+
 interface Feature {
     description: string;
     qty: number;
@@ -69,7 +70,7 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
             ...updatedFeatures[index],
             [key]: key === "has_access" ? value === "yes" : key === "qty" ? parseInt(value) : value,
         };
-        setFitur({ ...fitur, features: updatedFeatures });
+        setFitur({features: updatedFeatures });
     };
 
 
@@ -115,7 +116,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
     return (
         <div className="mx-10 ">
             <form onSubmit={handleSaveButton} className="p-6 md:p-8">
-
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="name">Nama Paket</Label>

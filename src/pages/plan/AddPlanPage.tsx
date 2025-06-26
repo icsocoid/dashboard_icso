@@ -2,14 +2,17 @@ import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SiteHeaderLink} from "@/components/site-header-link.tsx";
 import PlanForm from "@/components/add-plan.tsx";
+import { useParams } from "react-router-dom";
 
 export default function AddPlanPage() {
+
+    const { id } = useParams(); // ambil dari URL jika ada
     return (
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
-                <SiteHeaderLink title={"Master Plan"} url={"/plan"} />
-                <PlanForm planId={1} />
+                <SiteHeaderLink title={id ? "Edit Master Plan" : "Create Mater Plan"} url={"/plan"} />
+                <PlanForm planId={id ? parseInt(id) : undefined}  />
             </SidebarInset>
         </SidebarProvider>
     )

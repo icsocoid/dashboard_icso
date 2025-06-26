@@ -68,7 +68,7 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
-                <SiteHeaderLink title={"Email Template"} url={"/email-template"} />
+                <SiteHeaderLink title={templateId ? "Edit Email Template" : "Create Email Template"} url={"/email-template"} />
 
                 <div style={{ padding: 20 }}>
                     <TemplateForm
