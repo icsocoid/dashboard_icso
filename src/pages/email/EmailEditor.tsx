@@ -1,6 +1,5 @@
-// wrapper untuk ambil ID dari URL
 import { useParams } from 'react-router-dom';
-import EmailTemplateEditor from './EmailTemplateEditor';
+import EmailTemplateEditor from '@/pages/email/EmailTemplateEditor';
 
 const EmailEditor = () => {
     const { id } = useParams();

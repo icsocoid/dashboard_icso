@@ -1,9 +1,11 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { NumericFormat } from "react-number-format";
+import {getPlanById, savePlan, updatePlan} from "@/api/Config.tsx";
+import {toast} from "react-toastify";
 
 interface Feature {
     description: string;
@@ -11,13 +13,40 @@ interface Feature {
     has_access: boolean;
 }
 
-export default function BulkEditForm() {
+interface Props {
+    planId?: number;
+}
+
+const PlanForm: React.FC<Props> = ({ planId }) => {
     const [nama, setNama] = useState("")
     const [trialDays, setTrialDays] = useState<number>()
     const [priceMonthly, setPriceMonthly] = useState<number>()
     const [priceYearly, setPriceYearly] = useState<number>()
     const [deskripsi, setDeskripsi] = useState("")
 
+    useEffect(() => {
+        if (planId){
+            (async () => {
+                const plan = await getPlanById(planId);
+                if (plan) {
+                    setNama(plan.name);
+                    setTrialDays(plan.trial_days);
+                    setPriceMonthly(plan.price_monthly);
+                    setPriceYearly(plan.price_yearly);
+                    setDeskripsi(plan.description);
+
+                    const mappedFeatures = plan.features.map((feature: any) => ({
+                        description: feature.description,
+                        qty: Number(feature.quantity),
+                        has_access: feature.has_access === "yes",
+                    }));
+
+                    setFitur({ features: mappedFeatures });
+                }
+            })();
+        }
+
+    }, []);
 
     const [fitur, setFitur] = useState({
         features: [
@@ -44,15 +73,43 @@ export default function BulkEditForm() {
     };
 
 
+    interface FeaturePayload {
+        description: string;
+        qty: number;
+        has_access: "yes" | "no";
+    }
+
     const handleSaveButton = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
 
-        const transformedFeatures = fitur.features.map((f) => ({
-            ...f,
+        const transformedFeatures = fitur.features.map<FeaturePayload>((f) => ({
+            description: f.description,
+            qty: Number(f.qty),
             has_access: f.has_access ? "yes" : "no",
         }));
 
-        console.log({ features: transformedFeatures, priceYearly, priceMonthly, deskripsi, nama, trialDays });
+        const payload = {
+            name: nama,
+            price_monthly: Number(priceMonthly),
+            price_yearly: Number(priceYearly),
+            description: deskripsi,
+            trial_days: Number(trialDays),
+            features: transformedFeatures,
+        };
+
+        try {
+            const result = planId ?
+                await updatePlan(planId, payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features)
+                : await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
+
+            if (result.status) {
+                toast.success("Berhasil menyimpan plan!");
+            } else {
+                toast.error("Gagal menyimpan: " + (result.message || "Unknown error"));
+            }
+        } catch (error: any) {
+            toast.error("Error: " + (error.message || "Terjadi kesalahan"));
+        }
     };
 
     return (
@@ -147,5 +204,7 @@ export default function BulkEditForm() {
                 <Button className="mt-6 w-auto">Simpan</Button>
             </form>
         </div>
-);
-}
+    );
+};
+
+export default PlanForm;

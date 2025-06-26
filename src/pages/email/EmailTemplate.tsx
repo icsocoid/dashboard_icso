@@ -1,5 +1,5 @@
 // src/app/templates/page.tsx (atau sesuai struktur folder Next.js kamu)
-import EmailTemplateTable from "@/components/EmailTemplateTable.tsx";
+import EmailTemplateTable from "@/components/email-template-table.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SiteHeader} from "@/components/site-header.tsx";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";

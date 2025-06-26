@@ -114,7 +114,7 @@ const data = {
   management: [
     {
       name: "Plan",
-      url: "#",
+      url: "/plan",
       icon: StampIcon,
     },
     {
