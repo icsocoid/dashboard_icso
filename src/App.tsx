@@ -8,6 +8,7 @@ import EmailTemplate from "@/pages/email/EmailTemplate.tsx";
 import React from "react";
 import AddPlanPage from "@/pages/plan/AddPlanPage.tsx";
 import PlanPage from "@/pages/plan/PlanPage.tsx";
+import CouponPage from "@/pages/coupon/CouponPage.tsx";
 
 const App: React.FC = () => {
 
@@ -77,6 +78,15 @@ const App: React.FC = () => {
                     element={
                         <PrivateRoute>
                             <AddPlanPage />
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/coupon"
+                    element={
+                        <PrivateRoute>
+                            <CouponPage />
                         </PrivateRoute>
                     }
                 />

@@ -119,7 +119,7 @@ const data = {
     },
     {
       name: "Coupon",
-      url: "#",
+      url: "/coupon",
       icon: TicketPercentIcon,
     },
     {

@@ -26,7 +26,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
     const [trialDays, setTrialDays] = useState<number>()
     const [priceMonthly, setPriceMonthly] = useState<number>()
     const [priceYearly, setPriceYearly] = useState<number>()
-    const [priceTrial, setPriceTrial] = useState<number>()
     const [deskripsi, setDeskripsi] = useState("")
 
     useEffect(() => {
@@ -67,15 +66,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
             { description: "Custom Print Invoice", qty: 0, has_access: false },
         ] as Feature[],
     });
-
-    // const updateFeature = (index: number, key: keyof Feature, value: any) => {
-    //     const updatedFeatures = [...fitur.features];
-    //     updatedFeatures[index] = {
-    //         ...updatedFeatures[index],
-    //         [key]: key === "has_access" ? value === "yes" : key === "qty" ? parseInt(value) : value,
-    //     };
-    //     setFitur({features: updatedFeatures });
-    // };
 
 
     interface FeaturePayload {
@@ -120,7 +110,7 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
     return (
         <div className="mx-10 ">
             <form onSubmit={handleSaveButton} className="p-6 md:p-8">
-                <Card className="w-full max-w-screen-xl mx-auto p-2">
+                <Card className="w-full max-w-screen-lg mx-auto p-2">
                     <CardContent className={"py-3"}>
                         <form>
                             <div className="flex flex-row">
@@ -181,39 +171,8 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
                                             />
-                                            <span
-                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                            <span className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
                                               Day
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
-
-                            <div className="flex flex-row">
-                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="yearly_trial">Trial Price: <span
-                                        className={"text-red-700"}>*</span></Label>
-                                </div>
-                                <div className="basis-1/2">
-                                    <div className="grid grid-cols-1">
-                                        <div className="relative w-full">
-                                            <NumericFormat
-                                                id="yearly_trial"
-                                                thousandSeparator="."
-                                                decimalSeparator=","
-                                                allowNegative={false}
-                                                decimalScale={2}
-                                                placeholder="0.00"
-                                                value={priceTrial}
-                                                onChange={(values) => setPriceTrial(Number(values.target))}
-                                                className="w-full border border-input rounded-md px-3 py-2 pr-14 text-right focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
-                                            />
-                                            <span
-                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
-                                                IDR
                                             </span>
                                         </div>
                                     </div>
@@ -284,34 +243,286 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="qty_produk">Produk Terbatas: <span
+                                    <Label htmlFor="qty_produk">Hak Akses: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+
+                                <div className="basis-1/5  flex items-center space-x-2 flex-auto">
+                                    <div className="flex items-center  ">
+                                        <div className="flex items-center space-x-2">
+                                            <Switch checked id="airplane-mode"/>
+                                            <Label htmlFor="airplane-mode">Hak Akses</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <Textarea
+                                            id="deskripsi_akses"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3  flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="qty_produk">Custom Coa: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+
+                                <div className="basis-1/5  flex items-center space-x-2 flex-auto">
+                                    <div className="flex items-center ">
+                                        <div className="flex items-center space-x-2">
+                                            <Switch checked id="airplane-mode"/>
+                                            <Label htmlFor="airplane-mode">Hak Akses</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <Textarea
+                                            id="deskripsi_coa"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3  flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="qty_produk">Custom Dashboard: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+
+                                <div className="basis-1/5  flex items-center space-x-2 flex-auto">
+                                    <div className="flex items-center ">
+                                        <div className="flex items-center space-x-2">
+                                            <Switch checked id="airplane-mode"/>
+                                            <Label htmlFor="airplane-mode">Hak Akses</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <Textarea
+                                            id="deskripsi_dashboard"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3  flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="qty_produk">Custom Print Invoice: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+
+                                <div className="basis-1/5  flex items-center space-x-2 flex-auto">
+                                    <div className="flex items-center ">
+                                        <div className="flex items-center space-x-1">
+                                            <Switch checked id="airplane-mode"/>
+                                            <Label htmlFor="airplane-mode">Hak Akses</Label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+
+                                        <div className="grid grid-cols-1">
+                                            <Textarea
+                                                id="deskripsi_invoice"
+                                                placeholder={"Max 150 characters long"}
+                                                onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                                required
+                                                className={"mt-3"}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="trial_day">Produk Terbatas: <span
                                         className={"text-red-700"}>*</span></Label>
                                 </div>
                                 <div className="basis-1/2">
-                                    <div className="grid grid-cols-2">
-
-                                        <div className="grid grid-cols-1">
-                                            <div className="relative">
-                                                <Input
-                                                    id="qty_produk"
-                                                    type="number"
-                                                    min={0}
-                                                    placeholder="0"
-                                                    className="w-full pr-12 text-right"
-                                                />
-                                                <span
-                                                    className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                    <div className="grid grid-cols-1">
+                                        <div className="relative">
+                                            <Input
+                                                id="qty_produk"
+                                                type="number"
+                                                min={0}
+                                                placeholder="0"
+                                                className="w-full pr-12 text-right"
+                                            />
+                                            <span className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
                                               QTY
                                             </span>
-                                            </div>
                                         </div>
 
-                                        <div className="flex items-center flex-row-reverse ">
-                                            <div className="flex items-center space-x-2">
-                                                <Label htmlFor="airplane-mode">Access</Label>
-                                                <Switch id="airplane-mode"/>
-                                            </div>
+                                        <Textarea
+                                            id="deskripsi_product"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="trial_day">Custom User: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <div className="relative">
+                                            <Input
+                                                id="qty_user"
+                                                type="number"
+                                                min={0}
+                                                placeholder="0"
+                                                className="w-full pr-12 text-right"
+                                            />
+                                            <span
+                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                              QTY
+                                            </span>
                                         </div>
+
+                                        <Textarea
+                                            id="deskripsi_user"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="trial_day">Invoice Pembelian Terbatas: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <div className="relative">
+                                            <Input
+                                                id="qty_pembelian"
+                                                type="number"
+                                                min={0}
+                                                placeholder="0"
+                                                className="w-full pr-12 text-right"
+                                            />
+                                            <span
+                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                              QTY
+                                            </span>
+                                        </div>
+
+                                        <Textarea
+                                            id="deskripsi_pembelian"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="trial_day">Invoice Penjualan Terbatas: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <div className="relative">
+                                            <Input
+                                                id="qty_penjualan"
+                                                type="number"
+                                                min={0}
+                                                placeholder="0"
+                                                className="w-full pr-12 text-right"
+                                            />
+                                            <span
+                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                              QTY
+                                            </span>
+                                        </div>
+
+                                        <Textarea
+                                            id="deskripsi_penjualan"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+                            <div className="flex flex-row">
+                                <div className="basis-2/3 flex items-center space-x-2 flex-auto">
+                                    <Label htmlFor="trial_day">Limit Storage: <span
+                                        className={"text-red-700"}>*</span></Label>
+                                </div>
+                                <div className="basis-1/2">
+                                    <div className="grid grid-cols-1">
+                                        <div className="relative">
+                                            <Input
+                                                id="size_storage"
+                                                type="number"
+                                                min={0}
+                                                placeholder="0"
+                                                className="w-full pr-12 text-right"
+                                            />
+                                            <span
+                                                className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                              MB
+                                            </span>
+                                        </div>
+
+                                        <Textarea
+                                            id="deskripsi_storage"
+                                            placeholder={"Max 150 characters long"}
+                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            required
+                                            className={"mt-3"}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -327,35 +538,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                     </CardFooter>
                 </Card>
 
-                {/*<div>*/}
-                {/*    <h2 className="font-semibold text-lg mt-4 mb-2">Fitur</h2>*/}
-                {/*    <div className="grid gap-4">*/}
-                {/*        {fitur.features.map((feature, index) => (*/}
-                {/*            <div key={index} className="grid grid-cols-3 gap-2 items-center">*/}
-                {/*                <Input*/}
-                {/*                    readOnly*/}
-                {/*                    value={feature.description}*/}
-                {/*                    onChange={(e) => updateFeature(index, "description", e.target.value)}*/}
-                {/*                    placeholder="Deskripsi"*/}
-                {/*                />*/}
-                {/*                <Input*/}
-                {/*                    type="number"*/}
-                {/*                    value={feature.qty}*/}
-                {/*                    onChange={(e) => updateFeature(index, "qty", e.target.value)}*/}
-                {/*                    placeholder="Qty"*/}
-                {/*                />*/}
-                {/*                <select*/}
-                {/*                    value={feature.has_access ? "yes" : "no"}*/}
-                {/*                    onChange={(e) => updateFeature(index, "has_access", e.target.value)}*/}
-                {/*                    className="border rounded-md px-3 py-2"*/}
-                {/*                >*/}
-                {/*                    <option value="yes">Akses</option>*/}
-                {/*                    <option value="no">Tidak Akses</option>*/}
-                {/*                </select>*/}
-                {/*            </div>*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*</div>*/}
             </form>
         </div>
     );
