@@ -36,6 +36,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Dialog,
+    DialogTrigger
+} from "@/components/ui/dialog.tsx";
+import DialogAddCoupon from "@/components/dialog-add-coupon.tsx";
+
 
 const data: Payment[] = [
     {
@@ -256,6 +262,15 @@ export function CouponTable() {
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button className="ms-2"variant="outline">+ Coupon</Button>
+                    </DialogTrigger>
+                    <DialogAddCoupon/>
+
+
+                </Dialog>
             </div>
             <div className="rounded-md border">
                 <Table>
