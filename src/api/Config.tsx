@@ -4,7 +4,7 @@ import type {Plan} from "@/models/plan.model.tsx";
 import type {arrayOutputType} from "zod";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
-const BASE_URL = "http://apibilling.icso.biz.id/public/api"
+const BASE_URL = "https://apibilling.icso.biz.id/public/api"
 // const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 
 // ====================
