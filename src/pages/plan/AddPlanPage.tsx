@@ -12,7 +12,7 @@ export default function AddPlanPage() {
             <AppSidebar variant="inset" />
             <SidebarInset>
                 <SiteHeaderLink title={id ? "Edit Master Plan" : "Create Mater Plan"} url={"/plan"} />
-                <PlanForm planId={id ? parseInt(id) : undefined}  />
+                <PlanForm planId={Number(id) ? Number(id) : undefined}  />
             </SidebarInset>
         </SidebarProvider>
     )

@@ -1,17 +1,18 @@
 import axios from 'axios';
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 import type {Plan} from "@/models/plan.model.tsx";
+import type {arrayOutputType} from "zod";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
-const BASE_URL = "null"
-const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
+const BASE_URL = "http://apibilling.icso.biz.id/public/api"
+// const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 
 // ====================
 // 🔐 Auth API
 // ====================
-export async function loginUser(username: string, password: string) {
-    const response = await axios.post(`${API_URL}/login-form`, {
-        username,
+export async function loginUser(email: string, password: string) {
+    const response = await axios.post(`${BASE_URL}/login`, {
+        email,
         password,
     });
 
@@ -125,37 +126,32 @@ export async function deleteTemplate(id: number) {
 // 📩 Master Plan APIs
 // ====================
 
-export const AllPlan = async (page: number, size: number): Promise<{ data: Plan[]; total: number } | null> => {
+export const AllPlan = async (page: number, size: number): Promise<{
+    data: Plan[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    }; total: number } | null> => {
     try {
-        const res = await fetch('/planDummy.json');
-        const json = await res.json();
+        const token = localStorage.getItem("token");
 
-        // Simulasi pagination manual
-        const startIndex = (page - 1) * size;
-        const endIndex = startIndex + size;
-        const pagedData = json.slice(startIndex, endIndex);
+        const response  = await axios.get(`${BASE_URL}/plan/get-data?page=${page}&per_page=${size}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-        return {
-            data: pagedData,
-            total: json.length,
-        };
-
-        // const res = await axios.get(`${BASE_URL}/all?page=${page}&per_page=${size}`);
-        // return {
-        //     data: res.data?.data?.data ?? [],
-        //     total: res.data?.data?.total ?? 0,
-        // };
+        return response.data
     } catch (error) {
         console.error("Gagal mengambil semua template:", error);
         return null;
     }
 }
 
-interface FeaturePayload {
-    description: string;
-    qty: number;
-    has_access: "yes" | "no";
-}
 
 export const savePlan = async (
     name: string,
@@ -163,7 +159,7 @@ export const savePlan = async (
     price_yearly: number,
     description: string,
     trial_days: number,
-    features: FeaturePayload[]
+    features: arrayOutputType<any>
 ): Promise<{ status: boolean; message?: string }> => {
     const params = {
         name,
@@ -172,17 +168,37 @@ export const savePlan = async (
         description,
         trial_days,
         features,
-    }
-    try {
-        const res = await axios.post(`${BASE_URL}/plan/create-data`, params);
+    };
 
-        return res.data?.status
-            ? { status: true }
-            : { status: false, message: res.data.message || "Gagal menyimpan data" };
+    try {
+        const token = localStorage.getItem("token");
+        const res = await axios.post(`${BASE_URL}/plan/create-data`, params, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return res.data?.success
+            ? { status: true, message: res.data.message }
+            : {
+                status: false,
+                message: res.data.message || "Gagal menyimpan data",
+            };
     } catch (error: any) {
-        return { status: false, message: error.message || "Terjadi kesalahan" };
+        if (error.response && error.response.status === 422) {
+            return {
+                status: false,
+                message: error.response.data.message || "Validasi gagal",
+            };
+        }
+
+        return {
+            status: false,
+            message: error.response?.data?.message || error.message || "Terjadi kesalahan",
+        };
     }
 };
+
 
 export const updatePlan = async (
     id: number,
@@ -191,7 +207,7 @@ export const updatePlan = async (
     price_yearly: number,
     description: string,
     trial_days: number,
-    features: FeaturePayload[]
+    features: arrayOutputType<any>
 ): Promise<{ status: boolean; message?: string }> => {
     const params = {
         name,
@@ -202,8 +218,14 @@ export const updatePlan = async (
         features,
     }
     try {
-        const res = await axios.post(`${BASE_URL}/plan/update-data/${id}`, params);
-        return res.data?.status
+        const token = localStorage.getItem("token");
+
+        const res = await axios.post(`${BASE_URL}/plan/update-data/${id}`, params,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res.data?.success
             ? { status: true }
             : { status: false, message: res.data.message || "Gagal menyimpan plan" };
     } catch (error: any) {
@@ -212,46 +234,28 @@ export const updatePlan = async (
 };
 
 export const getPlanById = async (id: number): Promise<{
+    popular_plan: number;
     id: number,
     name: string,
     price_monthly: number,
     price_yearly: number,
     description: string,
     trial_days: number,
-    features: FeaturePayload[]} | null> => {
+    features: arrayOutputType<any>} | null> => {
     try {
+        const token = localStorage.getItem("token");
         const res = await axios.get(
-            `/planDetailDummy.json`
+            `${BASE_URL}/plan/detail-data/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
 
-
         if (res.data.success && res.data.data) {
-            const { name, price_monthly, price_yearly, description, trial_days, features } = res.data.data;
-
-            // Pastikan `price_*` bertipe number
-            return {
-                id,
-                name,
-                price_monthly: Number(price_monthly),
-                price_yearly: Number(price_yearly),
-                description,
-                trial_days,
-                features: features.map((f: any) => ({
-                    description: f.description,
-                    quantity: Number(f.quantity),
-                    has_access: f.has_access === "yes" ? "yes" : "no",
-                }))
-            };
+            const { name, popular_plan, price_monthly, price_yearly, description, trial_days, features} = res.data.data;
+            return { id, name, popular_plan, price_monthly, price_yearly, description, trial_days, features };
         }
-
-        // const res = await axios.get(
-        //     `${BASE_URL}/plan/detail-data/${id}`
-        // );
-        //
-        // if (res.data.status && res.data.data) {
-        //     const { name, price_monthly, price_yearly, description, trial_days, features} = res.data.data;
-        //     return { name, price_monthly, price_yearly, description, trial_days, features };
-        // }
 
         return null;
     } catch (err) {
@@ -263,11 +267,13 @@ export const getPlanById = async (id: number): Promise<{
 
 export async function deletePlan(id: number) {
     try {
-        const response = await axios.delete(`/planDeleteDummy.json?id=${id}`);
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${BASE_URL}/plan/delete-data/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
         return response.data
-
-        // const response = await axios.delete(`${BASE_URL}/plan/delete-data/${id}`)
-        // return response.data
     } catch (error: any) {
         console.error("Gagal menghapus data:", error)
         return {

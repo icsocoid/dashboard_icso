@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 
 
 const PrivateRoute = ({ children }: { children: JSX.Element })  => {
-    const isAuthenticated = !!localStorage.getItem("name") || !!localStorage.getItem("id");
+    const isAuthenticated = !!localStorage.getItem("token") ;
     return (
         isAuthenticated ? children : <Navigate to="/login" replace />
     );

@@ -11,9 +11,9 @@ import {useState} from "react";
 import type {Plan} from "@/models/plan.model.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {ArrowUpDown, ChevronDown, MoreHorizontal} from "lucide-react";
+import {ArrowUpDown, MoreHorizontal} from "lucide-react";
 import {
-    DropdownMenu, DropdownMenuCheckboxItem,
+    DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
@@ -84,31 +84,30 @@ export default function PlanTable() {
             cell: ({ row }) => row.getValue("name"),
         },
         {
-            accessorKey: "price",
+            accessorKey: "price_monthly",
             header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Price
+                    Price Monthly
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => row.getValue("price"),
+            cell: ({ row }) => row.getValue("price_monthly"),
         },
-
         {
-            accessorKey: "billing_cycle",
+            accessorKey: "price_yearly",
             header: ({ column }) => (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Billing Cycle
+                    Price Yearly
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => row.getValue("billing_cycle"),
+            cell: ({ row }) => row.getValue("price_yearly"),
         },
         {
             accessorKey: "created_at",
@@ -130,7 +129,7 @@ export default function PlanTable() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/edit-plan/${1}`)}>
+                            <DropdownMenuItem onClick={() => navigate(`/edit-plan/${template.id}`)}>
                                 Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleDeleteTemplate(template.id)}>
@@ -150,9 +149,9 @@ export default function PlanTable() {
             const page = pagination.pageIndex + 1
             const result = await AllPlan(page, pagination.pageSize)
 
-            if (result) {
+            if (result && result.data) {
                 setData(result.data)
-                setTotalItems(result.total)
+                setTotalItems(result.meta?.total || result.data.length)
             } else {
                 console.error("Gagal mengambil data")
             }
@@ -193,7 +192,7 @@ export default function PlanTable() {
     const confirmDelete = async () => {
         if (!selectedId) return
         const res = await deletePlan(selectedId)
-        if (res.status) {
+        if (res.success) {
             toast.success("Data berhasil dihapus!");
             setTimeout(() => window.location.reload(), 3000);
 
@@ -234,31 +233,10 @@ export default function PlanTable() {
                     }
                     className="max-w-sm"
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4"/>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => (
-                                <DropdownMenuCheckboxItem
-                                    key={column.id}
-                                    className="capitalize"
-                                    checked={column.getIsVisible()}
-                                    onCheckedChange={(value) => column.toggleVisibility(!value)}
-                                >
-                                    {column.id}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+
                 <Button
                     onClick={() => navigate("/add-plan")}
-                    className="bg-white hover:bg-gray-100 ms-2 text-black border font-semibold py-2 px-4 rounded-lg transition duration-200">
+                    className="bg-white hover:bg-gray-100 ms-auto text-black border font-semibold py-2 px-4 rounded-lg transition duration-200">
                     + Plan
                 </Button>
             </div>
@@ -285,8 +263,7 @@ export default function PlanTable() {
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
                             </TableRow>
-                        ) : table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                        ) : table.getRowModel().rows?.length ? (table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}

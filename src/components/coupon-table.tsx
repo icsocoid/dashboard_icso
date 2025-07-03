@@ -13,14 +13,13 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
@@ -229,43 +228,43 @@ export function CouponTable() {
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Search by code"
+                    value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("id")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {/*<DropdownMenu>*/}
+                {/*    <DropdownMenuTrigger asChild>*/}
+                {/*        <Button variant="outline" className="ml-auto">*/}
+                {/*            Columns <ChevronDown />*/}
+                {/*        </Button>*/}
+                {/*    </DropdownMenuTrigger>*/}
+                {/*    <DropdownMenuContent align="end">*/}
+                {/*        {table*/}
+                {/*            .getAllColumns()*/}
+                {/*            .filter((column) => column.getCanHide())*/}
+                {/*            .map((column) => {*/}
+                {/*                return (*/}
+                {/*                    <DropdownMenuCheckboxItem*/}
+                {/*                        key={column.id}*/}
+                {/*                        className="capitalize"*/}
+                {/*                        checked={column.getIsVisible()}*/}
+                {/*                        onCheckedChange={(value) =>*/}
+                {/*                            column.toggleVisibility(!value)*/}
+                {/*                        }*/}
+                {/*                    >*/}
+                {/*                        {column.id}*/}
+                {/*                    </DropdownMenuCheckboxItem>*/}
+                {/*                )*/}
+                {/*            })}*/}
+                {/*    </DropdownMenuContent>*/}
+                {/*</DropdownMenu>*/}
 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className="ms-2"variant="outline">+ Coupon</Button>
+                        <Button className="ml-auto" variant="outline">+ Coupon</Button>
                     </DialogTrigger>
                     <DialogAddCoupon/>
 

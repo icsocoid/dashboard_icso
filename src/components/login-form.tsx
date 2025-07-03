@@ -17,9 +17,9 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      localStorage.setItem("name", data.karyawan.employee_name);
-      localStorage.setItem("id", data.karyawan.id);
-      localStorage.setItem("email", data.karyawan.email);
+      localStorage.setItem("token", data.token.access_token);
+      const expiredAt = Date.now() + data.token.expires_in * 1000;
+      localStorage.setItem("expired", expiredAt.toString());
       navigate("/");
     } catch (err) {
       setError("Login gagal. Periksa email/password.");

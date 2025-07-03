@@ -5,17 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { NumericFormat } from "react-number-format";
 import {getPlanById, savePlan, updatePlan} from "@/api/Config.tsx";
-import {toast} from "react-toastify";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
 import {Switch} from "@/components/ui/switch.tsx";
-
-
-interface Feature {
-    description: string;
-    qty: number;
-    has_access: boolean;
-}
+import {toast} from "react-toastify";
 
 interface Props {
     planId?: number;
@@ -26,7 +19,30 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
     const [trialDays, setTrialDays] = useState<number>()
     const [priceMonthly, setPriceMonthly] = useState<number>()
     const [priceYearly, setPriceYearly] = useState<number>()
-    const [deskripsi, setDeskripsi] = useState("")
+    const [shortDeskripsi, setShortDeskripsi] = useState("")
+    const [popularPlan, setPopularPlan] = useState<number>()
+
+    const [features, setFeatures] = useState([
+        { id: "produk", description: "", qty: 0, has_access: "yes" },
+        { id: "user", description: "", qty: 0, has_access: "yes" },
+        { id: "pembelian", description: "", qty: 0, has_access: "yes" },
+        { id: "penjualan", description: "", qty: 0, has_access: "yes" },
+        { id: "storage", description: "", qty: 0, has_access: "yes" },
+        { id: "coa", description: "", qty: 0, has_access: "no" },
+        { id: "akses", description: "", qty: 0, has_access: "no" },
+        { id: "dashboard", description: "", qty: 0, has_access: "no" },
+        { id: "printInvoice", description: "", qty: 0, has_access: "no" },
+
+    ]);
+
+    const updateFeature = (id: string, field: "qty" | "description" | "has_access", value: string | number ) => {
+        setFeatures(prev =>
+            prev.map(f =>
+                f.id === id ? { ...f, [field]: value } : f
+            )
+        );
+    };
+
 
     useEffect(() => {
         if (planId){
@@ -35,61 +51,52 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                 if (plan) {
                     setNama(plan.name);
                     setTrialDays(plan.trial_days);
-                    setPriceMonthly(plan.price_monthly);
-                    setPriceYearly(plan.price_yearly);
-                    setDeskripsi(plan.description);
+                    setPriceMonthly(Number(plan.price_monthly));
+                    setPriceYearly(Number(plan.price_yearly));
+                    setShortDeskripsi(plan.description);
+                    setPopularPlan(plan.popular_plan);
 
-                    const mappedFeatures = plan.features.map((feature: any) => ({
-                        description: feature.description,
-                        qty: Number(feature.quantity),
-                        has_access: feature.has_access === "yes",
+                    const featureMap: Record<string, string> = {
+                        PRODUCT_LIMIT: "produk",
+                        USER_LIMIT: "user",
+                        PURCHASE_INVOICE_LIMIT: "pembelian",
+                        SALES_INVOICE_LIMIT: "penjualan",
+                        STORAGE_SIZE: "storage",
+                        ADD_COA: "coa",
+                        PERMISSIONS: "akses",
+                        ADD_DASHBOARD: "dashboard",
+                        CUSTOM_PRINT_REPORT: "printInvoice",
+                    };
+
+                    const mappedFeatures = plan.features.map((f: any) => ({
+                        id: featureMap[f.feature_name] || f.feature_name.toLowerCase(),
+                        description: f.description || "",
+                        qty: f.quantity,
+                        has_access: f.has_access
                     }));
 
-                    setFitur({ features: mappedFeatures });
+                    setFeatures(prev =>
+                        prev.map(item => {
+                            const found = mappedFeatures.find(f => f.id === item.id);
+                            return found ? { ...item, ...found } : item;
+                        })
+                    );
                 }
             })();
         }
-
     }, []);
-
-    const [fitur, setFitur] = useState({
-        features: [
-            { description: "Produk Terbatas", qty: 0, has_access: false },
-            { description: "Custom User", qty: 0, has_access: false },
-            { description: "Invoice Pembelian Terbatas", qty: 0, has_access: false },
-            { description: "Invoice Penjualan Terbatas", qty: 0, has_access: false },
-            { description: "Limit Storage", qty: 0, has_access: false },
-            { description: "Custom Coa", qty: 0, has_access: false },
-            { description: "Hak Akses", qty: 0, has_access: false },
-            { description: "Custom Dashboard", qty: 0, has_access: false },
-            { description: "Custom Print Invoice", qty: 0, has_access: false },
-            { description: "Custom Print Invoice", qty: 0, has_access: false },
-        ] as Feature[],
-    });
-
-
-    interface FeaturePayload {
-        description: string;
-        qty: number;
-        has_access: "yes" | "no";
-    }
 
     const handleSaveButton = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
 
-        const transformedFeatures = fitur.features.map<FeaturePayload>((f) => ({
-            description: f.description,
-            qty: Number(f.qty),
-            has_access: f.has_access ? "yes" : "no",
-        }));
-
         const payload = {
             name: nama,
+            popular_plan: popularPlan,
             price_monthly: Number(priceMonthly),
             price_yearly: Number(priceYearly),
-            description: deskripsi,
+            description: shortDeskripsi,
             trial_days: Number(trialDays),
-            features: transformedFeatures,
+            features: features.map(({ id, ...rest }) => rest),
         };
 
         try {
@@ -97,8 +104,15 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                 await updatePlan(planId, payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features)
                 : await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
 
+            //const result = await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
+
             if (result.status) {
-                toast.success("Berhasil menyimpan plan!");
+                toast.success("Berhasil menyimpan plan!", {
+                    autoClose: 3000, // dalam ms (default toastmu juga ini)
+                    onClose: () => {
+                        window.location.reload();
+                    },
+                });
             } else {
                 toast.error("Gagal menyimpan: " + (result.message || "Unknown error"));
             }
@@ -112,7 +126,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
             <form onSubmit={handleSaveButton} className="p-6 md:p-8">
                 <Card className="w-full max-w-screen-lg mx-auto p-2">
                     <CardContent className={"py-3"}>
-                        <form>
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
                                     <Label htmlFor="name">Nama Paket: <span className={"text-red-700"}>*</span></Label>
@@ -120,7 +133,11 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                 <div className="basis-1/2">
                                     <div className="grid grid-cols-2">
                                         <div className="flex items-center space-x-2 flex-auto">
-                                            <Checkbox id="terms"/>
+                                            <Checkbox
+                                                id="popular_plan"
+                                                checked={popularPlan === 1}
+                                                onCheckedChange={(checked) => setPopularPlan(checked ? 1 : 0)}
+                                            />
                                             <Label htmlFor="terms">Popular plan</Label>
                                         </div>
                                         <Input
@@ -145,9 +162,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                     <div className="grid grid-cols-1">
                                         <Textarea
                                             id="description"
-                                            value={deskripsi}
+                                            value={shortDeskripsi}
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => setShortDeskripsi(e.target.value ? e.target.value : "")}
                                             required/>
                                     </div>
                                 </div>
@@ -170,6 +187,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                value={trialDays}
+                                                onChange={(e) => setTrialDays(Number(e.target.value))}
+
                                             />
                                             <span className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
                                               Day
@@ -197,7 +217,10 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 decimalScale={2}
                                                 placeholder="0.00"
                                                 value={priceMonthly}
-                                                onChange={(values) => setPriceMonthly(Number(values.target))}
+                                                onValueChange={(values) => {
+                                                    const num = Number(values.value);
+                                                    setPriceMonthly(isNaN(num) ? 0 : num);
+                                                }}
                                                 className="w-full border border-input rounded-md px-3 py-2 pr-14 text-right focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                                             />
                                             <span
@@ -227,7 +250,10 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 decimalScale={2}
                                                 placeholder="0.00"
                                                 value={priceYearly}
-                                                onChange={(values) => setPriceYearly(Number(values.target))}
+                                                onValueChange={(values) => {
+                                                    const num = Number(values.value);
+                                                    setPriceYearly(isNaN(num) ? 0 : num);
+                                                }}
                                                 className="w-full border border-input rounded-md px-3 py-2 pr-14 text-right focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                                             />
                                             <span
@@ -243,14 +269,18 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="qty_produk">Hak Akses: <span
+                                    <Label>Hak Akses: <span
                                         className={"text-red-700"}>*</span></Label>
                                 </div>
 
                                 <div className="basis-1/5  flex items-center space-x-2 flex-auto">
                                     <div className="flex items-center  ">
                                         <div className="flex items-center space-x-2">
-                                            <Switch checked id="airplane-mode"/>
+                                            <Switch
+                                                checked={features.find(f => f.id === "akses")?.has_access === "yes"}
+                                                onCheckedChange={(checked) => updateFeature("akses", "has_access", checked ? "yes" : "no")}
+                                                id="switch_akses"
+                                            />
                                             <Label htmlFor="airplane-mode">Hak Akses</Label>
                                         </div>
                                     </div>
@@ -260,9 +290,11 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_akses"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
                                             required
                                             className={"mt-3"}
+                                            onChange={(e) => updateFeature("akses", "description", e.target.value)}
+                                            value={features.find(f => f.id === "akses")?.description || ""}
+
                                         />
                                     </div>
                                 </div>
@@ -272,14 +304,18 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="qty_produk">Custom Coa: <span
+                                    <Label>Custom Coa: <span
                                         className={"text-red-700"}>*</span></Label>
                                 </div>
 
                                 <div className="basis-1/5  flex items-center space-x-2 flex-auto">
                                     <div className="flex items-center ">
                                         <div className="flex items-center space-x-2">
-                                            <Switch checked id="airplane-mode"/>
+                                            <Switch
+                                                checked={features.find(f => f.id === "coa")?.has_access === "yes"}
+                                                onCheckedChange={(checked) => updateFeature("coa", "has_access", checked ? "yes" : "no")}
+                                                id="switch_coa"
+                                            />
                                             <Label htmlFor="airplane-mode">Hak Akses</Label>
                                         </div>
                                     </div>
@@ -289,9 +325,11 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_coa"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
                                             required
                                             className={"mt-3"}
+                                            onChange={(e) => updateFeature("coa", "description", e.target.value)}
+                                            value={features.find(f => f.id === "coa")?.description || ""}
+
                                         />
                                     </div>
                                 </div>
@@ -301,14 +339,17 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="qty_produk">Custom Dashboard: <span
-                                        className={"text-red-700"}>*</span></Label>
+                                    <Label>Custom Dashboard: <span className={"text-red-700"}>*</span></Label>
                                 </div>
 
                                 <div className="basis-1/5  flex items-center space-x-2 flex-auto">
                                     <div className="flex items-center ">
                                         <div className="flex items-center space-x-2">
-                                            <Switch checked id="airplane-mode"/>
+                                            <Switch
+                                                checked={features.find(f => f.id === "dashboard")?.has_access === "yes"}
+                                                onCheckedChange={(checked) => updateFeature("dashboard", "has_access", checked ? "yes" : "no")}
+                                                id="switch_coa"
+                                            />
                                             <Label htmlFor="airplane-mode">Hak Akses</Label>
                                         </div>
                                     </div>
@@ -318,9 +359,11 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_dashboard"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
                                             required
                                             className={"mt-3"}
+                                            onChange={(e) => updateFeature("dashboard", "description", e.target.value)}
+                                            value={features.find(f => f.id === "dashboard")?.description || ""}
+
                                         />
                                     </div>
                                 </div>
@@ -330,14 +373,18 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
                             <div className="flex flex-row">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="qty_produk">Custom Print Invoice: <span
+                                    <Label>Custom Print Invoice: <span
                                         className={"text-red-700"}>*</span></Label>
                                 </div>
 
                                 <div className="basis-1/5  flex items-center space-x-2 flex-auto">
                                     <div className="flex items-center ">
                                         <div className="flex items-center space-x-1">
-                                            <Switch checked id="airplane-mode"/>
+                                            <Switch
+                                                checked={features.find(f => f.id === "printInvoice")?.has_access === "yes"}
+                                                onCheckedChange={(checked) => updateFeature("printInvoice", "has_access", checked ? "yes" : "no")}
+                                                id="switch_coa"
+                                            />
                                             <Label htmlFor="airplane-mode">Hak Akses</Label>
                                         </div>
                                     </div>
@@ -349,9 +396,11 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             <Textarea
                                                 id="deskripsi_invoice"
                                                 placeholder={"Max 150 characters long"}
-                                                onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
                                                 required
                                                 className={"mt-3"}
+                                                onChange={(e) => updateFeature("printInvoice", "description", e.target.value)}
+                                                value={features.find(f => f.id === "printInvoice")?.description || ""}
+
                                             />
                                         </div>
                                     </div>
@@ -374,6 +423,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                onChange={(e) => updateFeature("produk", "qty", Number(e.target.value))}
+                                                value={features.find(f => f.id === "produk")?.qty || ""}
+
                                             />
                                             <span className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
                                               QTY
@@ -383,9 +435,10 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_product"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => updateFeature("produk", "description", e.target.value)}
                                             required
                                             className={"mt-3"}
+                                            value={features.find(f => f.id === "produk")?.description || ""}
                                         />
                                     </div>
                                 </div>
@@ -407,6 +460,10 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                onChange={(e) => updateFeature("user", "qty", Number(e.target.value))}
+                                                value={features.find(f => f.id === "user")?.qty || ""}
+
+
                                             />
                                             <span
                                                 className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
@@ -417,7 +474,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_user"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => updateFeature("user", "description", e.target.value)}
+                                            value={features.find(f => f.id === "user")?.description || ""}
+
                                             required
                                             className={"mt-3"}
                                         />
@@ -441,6 +500,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                onChange={(e) => updateFeature("pembelian", "qty", Number(e.target.value))}
+                                                value={features.find(f => f.id === "pembelian")?.qty || ""}
+
                                             />
                                             <span
                                                 className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
@@ -451,7 +513,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_pembelian"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => updateFeature("pembelian", "description", e.target.value)}
+                                            value={features.find(f => f.id === "pembelian")?.description || ""}
+
                                             required
                                             className={"mt-3"}
                                         />
@@ -475,6 +539,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                onChange={(e) => updateFeature("penjualan", "qty", Number(e.target.value))}
+                                                value={features.find(f => f.id === "penjualan")?.qty || ""}
+
                                             />
                                             <span
                                                 className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
@@ -485,7 +552,8 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_penjualan"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => updateFeature("penjualan", "description", e.target.value)}
+                                            value={features.find(f => f.id === "penjualan")?.description || ""}
                                             required
                                             className={"mt-3"}
                                         />
@@ -509,6 +577,9 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                                 min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
+                                                onChange={(e) => updateFeature("storage", "qty", Number(e.target.value))}
+                                                value={features.find(f => f.id === "storage")?.qty || ""}
+
                                             />
                                             <span
                                                 className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
@@ -519,14 +590,14 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_storage"
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setDeskripsi(e.target.value ? e.target.value : "")}
+                                            onChange={(e) => updateFeature("storage", "description", e.target.value)}
+                                            value={features.find(f => f.id === "storage")?.description || ""}
                                             required
                                             className={"mt-3"}
                                         />
                                     </div>
                                 </div>
                             </div>
-                        </form>
 
                         <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
 
