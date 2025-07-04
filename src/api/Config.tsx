@@ -5,14 +5,14 @@ import type {arrayOutputType} from "zod";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
-// const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
+const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 
 // ====================
 // 🔐 Auth API
 // ====================
-export async function loginUser(email: string, password: string) {
-    const response = await axios.post(`${BASE_URL}/login`, {
-        email,
+export async function loginUser(username: string, password: string) {
+    const response = await axios.post(`${API_URL}/login-form`, {
+        username,
         password,
     });
 

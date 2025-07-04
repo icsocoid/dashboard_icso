@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 const data = {
   user: {
-    name: `${localStorage.getItem("name")}`,
+    name: `${localStorage.getItem("nama")}`,
     email: `${localStorage.getItem("email")}`,
     avatar: "/avatars/shadcn.jpg",
   },
