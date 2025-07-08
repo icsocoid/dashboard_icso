@@ -117,6 +117,15 @@ const App: React.FC = () => {
                     }
                 />
 
+                <Route
+                    path="/edit-coupon/:id"
+                    element={
+                        <PrivateRoute>
+                            <CouponPage />
+                        </PrivateRoute>
+                    }
+                />
+
 
             </Routes>
     );

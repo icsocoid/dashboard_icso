@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
     type ColumnDef,
@@ -17,13 +15,10 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -36,241 +31,249 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import {
-    Dialog,
-    DialogTrigger
+    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from "@/components/ui/dialog.tsx";
 import DialogAddCoupon from "@/components/dialog-add-coupon.tsx";
+import type {CouponModal} from "@/models/coupon.modal.tsx";
+import {useState} from "react";
+import {AllCoupon, deletePlan} from "@/api/Config.tsx";
+import {toast} from "react-toastify";
 
-
-const data: Payment[] = [
-    {
-        id: "m5gr84i9",
-        limit: 100,
-        status: "success",
-        email: "ken99@example.com",
-        percent: 50,
-    },
-    {
-        id: "3u1reuv4",
-        limit: 50,
-        status: "success",
-        email: "Abe45@example.com",
-        percent: 20,
-    },
-    {
-        id: "derv1ws0",
-        limit: 3,
-        status: "processing",
-        email: "Monserrat44@example.com",
-        percent: 50,
-    },
-    {
-        id: "5kma53ae",
-        limit: 5,
-        status: "success",
-        email: "Silas22@example.com",
-        percent: 90,
-
-    },
-    {
-        id: "bhqecj4p",
-        limit: 5,
-        status: "failed",
-        email: "carmella@example.com",
-        percent: 50,
-
-    },
-]
-
-export type Payment = {
-    id: string
-    limit: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-    percent: number
-}
-
-
-export const columns: ColumnDef<Payment>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "id",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Code
-                    <ArrowUpDown />
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("id")}</div>,
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const status = row.getValue("status") as string
-
-            const statusColor: Record<typeof status, string> = {
-                success: "bg-green-100 text-green-800",
-                processing: "bg-yellow-100 text-yellow-800",
-                failed: "bg-red-100 text-red-800",
-                pending: "bg-red-100 text-red-800",
-            }
-
-
-            return (
-                <Badge className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusColor[status] || "bg-gray-200 text-gray-800"}`}>
-                    {status}
-                </Badge>
-            )
-        },
-    },
-    {
-        accessorKey: "percent",
-        header: "Percent(%)",
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("percent")}</div>
-        ),
-    },
-    {
-        accessorKey: "limit",
-        header: () => <div className="">Limit</div>,
-        cell: ({ row }) => {
-            const limit = parseFloat(row.getValue("limit"))
-            return <div className="font-medium">{limit}</div>
-        },
-    },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const payment = row.original
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
-]
-
-export function CouponTable() {
+export default function CouponTable() {
+    const [selectedId, setSelectedId] = useState<number | null>(null)
+    const [openDialogDelete, setOpenDialogDelete] = useState(false)
+    const [openDialog, setOpenDialog] = useState(false)
+    const [data, setData] = React.useState<CouponModal[]>([])
+    const [loading, setLoading] = React.useState(false)
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize: 10,
+    })
+    const [totalItems, setTotalItems] = React.useState(0)
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [editId, setEditId] = useState<number | null>(null)
 
+
+    const handleDeleteCoupon = (id: number) => {
+        setSelectedId(id)
+        setOpenDialogDelete(true)
+    }
+    const confirmDelete = async () => {
+        if (!selectedId) return
+        const res = await deletePlan(selectedId)
+        if (res.success) {
+            toast.success("Data berhasil dihapus!");
+            setTimeout(() => window.location.reload(), 3000);
+
+        } else {
+            toast.error("Gagal menyimpan template: " + res.message);
+        }
+        setOpenDialogDelete(false)
+    }
+
+    const fetchTemplates = async () => {
+        setLoading(true)
+        setRowSelection({})
+        const page = pagination.pageIndex + 1
+        const result = await AllCoupon(page, pagination.pageSize)
+
+        if (result && result.data) {
+            setData(result.data)
+            setTotalItems(result.meta?.total || result.data.length)
+        } else {
+            console.error("Gagal mengambil data")
+        }
+        setLoading(false)
+    }
+
+    const columns: ColumnDef<CouponModal>[] = [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
+            accessorKey: "code",
+            header: ({ column }) => {
+                return (
+                    <Button
+                        variant="ghost"
+                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    >
+                        Code
+                        <ArrowUpDown />
+                    </Button>
+                )
+            },
+            cell: ({ row }) => <div className="lowercase">{row.getValue("code")}</div>,
+        },
+        {
+            accessorKey: "percentage",
+            header: "Percent(%)",
+            cell: ({ row }) => (
+                <div className="capitalize">{row.getValue("percentage")}</div>
+            ),
+        },
+        {
+            accessorKey: "limit",
+            header: () => <div className="">Limit</div>,
+            cell: ({ row }) => {
+                const limit = parseFloat(row.getValue("limit"))
+                return <div className="font-medium">{limit}</div>
+            },
+        },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const coupon = row.original
+
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => {
+                                setEditId(coupon.id)
+                                setOpenDialog(true)
+                            }}>
+                                Edit
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem onClick={() => handleDeleteCoupon(coupon.id)}>
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
+            },
+        },
+    ]
+
+    React.useEffect(() => {
+        const fetchTemplates = async () => {
+            setLoading(true)
+            setRowSelection({})
+            const page = pagination.pageIndex + 1
+            const result = await AllCoupon(page, pagination.pageSize)
+
+            if (result && result.data) {
+                setData(result.data)
+                setTotalItems(result.meta?.total || result.data.length)
+            } else {
+                console.error("Gagal mengambil data")
+            }
+            setLoading(false)
+        }
+
+        fetchTemplates()
+    }, [pagination])
     const table = useReactTable({
-        data,
+        data: data,
         columns,
+        manualPagination: true,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        pageCount: Math.ceil(totalItems / pagination.pageSize),
+        onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination,
         },
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
     })
 
     return (
         <div className="w-full">
+
+            <Dialog open={openDialogDelete}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Yakin ingin menghapus?</DialogTitle>
+                        <DialogDescription>
+                            Tindakan ini tidak bisa dibatalkan. Template akan dihapus secara permanen.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setOpenDialogDelete(false)}>
+                            Batal
+                        </Button>
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Hapus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search by code"
-                    value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("id")?.setFilterValue(event.target.value)
+                        table.getColumn("code")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />
-                {/*<DropdownMenu>*/}
-                {/*    <DropdownMenuTrigger asChild>*/}
-                {/*        <Button variant="outline" className="ml-auto">*/}
-                {/*            Columns <ChevronDown />*/}
-                {/*        </Button>*/}
-                {/*    </DropdownMenuTrigger>*/}
-                {/*    <DropdownMenuContent align="end">*/}
-                {/*        {table*/}
-                {/*            .getAllColumns()*/}
-                {/*            .filter((column) => column.getCanHide())*/}
-                {/*            .map((column) => {*/}
-                {/*                return (*/}
-                {/*                    <DropdownMenuCheckboxItem*/}
-                {/*                        key={column.id}*/}
-                {/*                        className="capitalize"*/}
-                {/*                        checked={column.getIsVisible()}*/}
-                {/*                        onCheckedChange={(value) =>*/}
-                {/*                            column.toggleVisibility(!value)*/}
-                {/*                        }*/}
-                {/*                    >*/}
-                {/*                        {column.id}*/}
-                {/*                    </DropdownMenuCheckboxItem>*/}
-                {/*                )*/}
-                {/*            })}*/}
-                {/*    </DropdownMenuContent>*/}
-                {/*</DropdownMenu>*/}
 
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button className="ml-auto" variant="outline">+ Coupon</Button>
-                    </DialogTrigger>
-                    <DialogAddCoupon/>
+                <Button
+                    className="ml-auto"
+                    onClick={() => {
+                        setEditId(null) // reset form
+                        setOpenDialog(true)
+                    }}
+                    variant="outline"
+                >
+                    + Coupon
+                </Button>
 
-
+                <Dialog open={openDialog} onOpenChange={(val) => {
+                    if (!val) {
+                        setEditId(null)
+                        setOpenDialog(false)
+                    }
+                }}>
+                        <DialogAddCoupon
+                            couponId={editId}
+                            onSuccess={() => {
+                                fetchTemplates()
+                                setOpenDialog(false)
+                                setEditId(null)
+                            }}
+                        />
                 </Dialog>
             </div>
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -292,7 +295,11 @@ export function CouponTable() {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
+                                </TableRow>
+                            ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -348,3 +355,4 @@ export function CouponTable() {
         </div>
     )
 }
+

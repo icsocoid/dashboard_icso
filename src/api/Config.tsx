@@ -2,6 +2,7 @@ import axios from 'axios';
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 import type {Plan} from "@/models/plan.model.tsx";
 import type {arrayOutputType} from "zod";
+import type {CouponModal} from "@/models/coupon.modal.tsx";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
@@ -280,5 +281,128 @@ export async function deletePlan(id: number) {
             status: false,
             message: error?.response?.data?.message || "Terjadi kesalahan saat menghapus data",
         }
+    }
+}
+
+
+// ====================
+// 📩 Master Coupon APIs
+// ====================
+
+export const AllCoupon = async (page: number, size: number): Promise<{
+    data: CouponModal[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    }; total: number } | null> => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response  = await axios.get(`${BASE_URL}/coupon/get-data?page=${page}&per_page=${size}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data
+    } catch (error) {
+        console.error("Gagal mengambil semua template:", error);
+        return null;
+    }
+}
+
+export const saveCoupon = async (
+    code: string,
+    percentage: number,
+    plan_id: number,
+    action_type: number,
+    limit: number,
+    deleted_at: string,
+    expiry_at: string
+): Promise<{ status: boolean; message?: string }> => {
+    const params = {
+        code,
+        percentage,
+        plan_id,
+        action_type,
+        limit,
+        deleted_at,
+        expiry_at,
+    };
+
+    try {
+        const token = localStorage.getItem("token");
+        const res = await axios.post(`${BASE_URL}/coupon/create-data`, params, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return res.data?.success
+            ? { status: true, message: res.data.message }
+            : {
+                status: false,
+                message: res.data.message || "Gagal menyimpan data",
+            };
+    } catch (error: any) {
+        if (error.response && error.response.status === 422) {
+            return {
+                status: false,
+                message: error.response.data.message || "Validasi gagal",
+            };
+        }
+
+        return {
+            status: false,
+            message: error.response?.data?.message || error.message || "Terjadi kesalahan",
+        };
+    }
+};
+
+export const getCouponById = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`${BASE_URL}/coupon/detail-data/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.data; // pastikan sesuai dengan response API-mu
+    } catch (error) {
+        console.error("Gagal mengambil data coupon:", error);
+        return null;
+    }
+};
+
+export const updateCoupon = async (
+    id: number,
+    code: string,
+    percentage: number,
+    plan_id: number,
+    action_type: number,
+    limit: number,
+    deleted_at: string,
+    expiry_at: string
+) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.post(`${BASE_URL}/coupon/update-data/${id}`, {
+            code,
+            percentage,
+            plan_id,
+            action_type,
+            limit,
+            deleted_at,
+            expiry_at,
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+
+        return response.data
+    } catch (error) {
+        console.error("Gagal update coupon:", error)
+        return { status: false, message: "Gagal update coupon" }
     }
 }

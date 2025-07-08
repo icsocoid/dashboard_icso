@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import { NumericFormat } from "react-number-format";
 import {getPlanById, savePlan, updatePlan} from "@/api/Config.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Switch} from "@/components/ui/switch.tsx";
 import {toast} from "react-toastify";
+import { Trash } from "lucide-react";
 
 interface Props {
     planId?: number;
+}
+
+interface Fitur {
+    id: string;
+    name: string;
 }
 
 const PlanForm: React.FC<Props> = ({ planId }) => {
@@ -119,6 +125,24 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
         } catch (error: any) {
             toast.error("Error: " + (error.message || "Terjadi kesalahan"));
         }
+    };
+
+    const [fiturs, setFiturs] = useState<Fitur[]>([
+        { id: crypto.randomUUID(), name: "" }
+    ]);
+
+    const handleAddFitur = () => {
+        setFiturs([...fiturs, { id: crypto.randomUUID(), name: "" }]);
+    };
+
+    const handleRemoveFitur = (id: string) => {
+        setFiturs(fiturs.filter((fitur) => fitur.id !== id));
+    };
+
+    const handleChange = (id: string, value: string) => {
+        setFiturs((prev) =>
+            prev.map((f) => (f.id === id ? { ...f, name: value } : f))
+        );
     };
 
     return (
@@ -599,12 +623,63 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                 </div>
                             </div>
 
-                        <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
 
                     </CardContent>
+                </Card>
+
+                <Card className={"w-full max-w-screen-lg mx-auto p-2 mt-3"}>
+                    <CardHeader>
+                        <CardTitle>Add Fitur</CardTitle>
+
+                        <div className="flex flex-row items-center ">
+                            <CardDescription>Tambahkan fitur custom kamu</CardDescription>
+                            <Button
+                                type="button"
+                                onClick={handleAddFitur}
+                                className="bg-white hover:bg-gray-100 ms-auto text-black border font-semibold py-2 px-4 rounded-lg transition duration-200"
+                            >
+                                + Tambah Fitur
+                            </Button>
+                        </div>
+                        <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+                    </CardHeader>
+
+                    <CardContent className={"py-3"}>
+                        {fiturs.map((fitur, index) => (
+                            <div key={fitur.id}>
+                                <div className="flex flex-row mb-2">
+                                    <div className="basis-1 flex items-center space-x-2 flex-auto">
+                                        <Label htmlFor={`fitur-${index}`}>
+                                            Nama Fitur: <span className={"text-red-700"}>*</span>
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center flex-auto">
+                                        <Input
+                                            id={`fitur-${index}`}
+                                            type="text"
+                                            placeholder={"Masukkan nama fitur"}
+                                            value={fitur.name}
+                                            onChange={(e) => handleChange(fitur.id, e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="ms-3">
+                                        <Button
+                                            type="button"
+                                            onClick={() => handleRemoveFitur(fitur.id)}
+                                            className="bg-red-600 hover:bg-red-500 ms-auto text-white border font-semibold py-2 px-4 rounded-lg transition duration-200"
+                                        >
+                                            <Trash color="white" size={16}/>
+                                        </Button>
+                                    </div>
+                                </div>
+                                <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
+                            </div>
+                        ))}
+                    </CardContent>
+
 
                     <CardFooter className="flex flex-col items-end space-x-2 flex-auto">
-
+                        <hr className="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700"/>
                         <Button className="w-auto">Simpan</Button>
                     </CardFooter>
                 </Card>
