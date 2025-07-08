@@ -1,6 +1,5 @@
 import * as React from "react"
 import {
-    type ColumnDef,
     type ColumnFiltersState,
     flexRender,
     getCoreRowModel,
@@ -11,16 +10,8 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
     Table,
@@ -33,11 +24,12 @@ import {
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 } from "@/components/ui/dialog.tsx";
-import DialogAddCoupon from "@/components/dialog-add-coupon.tsx";
+import DialogAddCoupon from "@/components/dialog/dialog-add-coupon.tsx";
 import type {CouponModal} from "@/models/coupon.modal.tsx";
 import {useState} from "react";
 import {AllCoupon, deleteCoupon} from "@/api/Config.tsx";
 import {toast} from "react-toastify";
+import {getCouponColumns} from "@/components/column/column-coupon.tsx";
 
 export default function CouponTable() {
     const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -89,89 +81,7 @@ export default function CouponTable() {
         setLoading(false)
     }
 
-    const columns: ColumnDef<CouponModal>[] = [
-        {
-            id: "select",
-            header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                />
-            ),
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                />
-            ),
-            enableSorting: false,
-            enableHiding: false,
-        },
-        {
-            accessorKey: "code",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Code
-                        <ArrowUpDown />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("code")}</div>,
-        },
-        {
-            accessorKey: "percentage",
-            header: "Percent(%)",
-            cell: ({ row }) => (
-                <div className="capitalize">{row.getValue("percentage")}</div>
-            ),
-        },
-        {
-            accessorKey: "limit",
-            header: () => <div className="">Limit</div>,
-            cell: ({ row }) => {
-                const limit = parseFloat(row.getValue("limit"))
-                return <div className="font-medium">{limit}</div>
-            },
-        },
-        {
-            id: "actions",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const coupon = row.original
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => {
-                                setEditId(coupon.id)
-                                setOpenDialog(true)
-                            }}>
-                                Edit
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem onClick={() => handleDeleteCoupon(coupon.id)}>
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )
-            },
-        },
-    ]
+    const columns = getCouponColumns(setEditId, setOpenDialog, handleDeleteCoupon)
 
     React.useEffect(() => {
         fetchTemplates().catch(console.error)

@@ -449,7 +449,7 @@ export const AllPayment = async (page: number, size: number): Promise<{
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/payment/get-data?page=${page}&per_page=${size}`, {
+        const response  = await axios.get(`${BASE_URL}/payment-method/get-data?page=${page}&per_page=${size}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

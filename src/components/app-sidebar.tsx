@@ -124,7 +124,7 @@ const data = {
     },
     {
       name: "Payment",
-      url: "#",
+      url: "/payment",
       icon: DollarSignIcon,
     },{
       name: "Subscription",
