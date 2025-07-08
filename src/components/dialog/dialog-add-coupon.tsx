@@ -51,7 +51,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
     const [persen, setPersen] = useState<number>(0)
 
     const [plans, setPlans] = useState<Plan[]>([])
-    const [selectedPlans, setSelectedPlans] = useState<number>(0)
+    const [selectedPlans, setSelectedPlans] = useState<number>()
     const [selectedActions, setSelectedActions] = useState<number>(0)
     const [limit, setLimit] = useState<number>(0)
 
@@ -210,7 +210,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Daftar Plan</SelectLabel>
-                                        <SelectItem value="0">Select All</SelectItem>
+                                        <SelectItem value="">Select All</SelectItem>
                                         {plans.map((plan) => (
                                             <SelectItem
                                                 key={plan.id}
