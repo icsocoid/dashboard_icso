@@ -56,20 +56,24 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
     const [limit, setLimit] = useState<number>(0)
 
 
+    const resetForm = () => {
+        setCode("")
+        setPersen(0)
+        setLimit(0)
+        setSelectedPlans("")
+        setSelectedActions("")
+        setDateDeleteInput("")
+        setDateExpiredInput("")
+        setTimeDeleteInput("00:00:00")
+        setTimeExpiredInput("00:00:00")
+        setDateDeleteTime(undefined)
+        setDateExpired(undefined)
+    }
+
     // Reset form saat couponId bernilai null (tambah data baru)
     useEffect(() => {
         if (couponId === null ) {
-            setCode("")
-            setPersen(0)
-            setLimit(0)
-            setSelectedPlans("")
-            setSelectedActions("")
-            setDateDeleteInput("")
-            setDateExpiredInput("")
-            setTimeDeleteInput("00:00:00")
-            setTimeExpiredInput("00:00:00")
-            setDateDeleteTime(undefined)
-            setDateExpired(undefined)
+            resetForm()
         }
     }, [couponId])
 
@@ -144,6 +148,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
             if (result.status) {
                 onSuccess?.()
+                resetForm()
                 toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
                 });
