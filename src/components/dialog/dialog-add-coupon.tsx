@@ -51,7 +51,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
     const [persen, setPersen] = useState<number>(0)
 
     const [plans, setPlans] = useState<Plan[]>([])
-    const [selectedPlans, setSelectedPlans] = useState<number>()
+    const [selectedPlans, setSelectedPlans] = useState<string>("")
     const [selectedActions, setSelectedActions] = useState<number>(0)
     const [limit, setLimit] = useState<number>(0)
 
@@ -62,7 +62,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
             setCode("")
             setPersen(0)
             setLimit(0)
-            setSelectedPlans(0)
+            setSelectedPlans("")
             setSelectedActions(0)
             setDateDeleteInput("")
             setDateExpiredInput("")
@@ -93,7 +93,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                     setCode(result.code)
                     setPersen(result.percentage)
                     setLimit(result.limit)
-                    setSelectedPlans(Number(result.plan_id))
+                    setSelectedPlans(String(result.plan_id))
                     setSelectedActions(Number(result.action_type))
 
                     // split datetime: "2025-07-07 15:00:00"
@@ -203,14 +203,14 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                         <div className="grid gap-3 w-full">
                             <Label>Plan</Label>
 
-                            <Select value={selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans(Number(val))}>
+                            <Select value={selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans((val))}>
                                 <SelectTrigger className="">
                                     <SelectValue placeholder="Select plan"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Daftar Plan</SelectLabel>
-                                        <SelectItem value=" ">Select All</SelectItem>
+                                        <SelectItem value="">Select All</SelectItem>
                                         {plans.map((plan) => (
                                             <SelectItem
                                                 key={plan.id}
