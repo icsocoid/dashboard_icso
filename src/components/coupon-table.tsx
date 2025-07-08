@@ -66,7 +66,7 @@ export default function CouponTable() {
         const res = await deleteCoupon(selectedId)
         if (res.success) {
             toast.success("Data berhasil dihapus!");
-            setTimeout(() => window.location.reload(), 3000);
+            await fetchTemplates()
 
         } else {
             toast.error("Gagal menyimpan template: " + res.message);
@@ -147,7 +147,6 @@ export default function CouponTable() {
             enableHiding: false,
             cell: ({ row }) => {
                 const coupon = row.original
-
                 return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -175,23 +174,9 @@ export default function CouponTable() {
     ]
 
     React.useEffect(() => {
-        const fetchTemplates = async () => {
-            setLoading(true)
-            setRowSelection({})
-            const page = pagination.pageIndex + 1
-            const result = await AllCoupon(page, pagination.pageSize)
+        fetchTemplates().catch(console.error)
+    }, [pagination.pageIndex, pagination.pageSize])
 
-            if (result && result.data) {
-                setData(result.data)
-                setTotalItems(result.meta?.total || result.data.length)
-            } else {
-                console.error("Gagal mengambil data")
-            }
-            setLoading(false)
-        }
-
-        fetchTemplates()
-    }, [pagination])
     const table = useReactTable({
         data: data,
         columns,

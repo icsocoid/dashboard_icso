@@ -3,6 +3,7 @@ import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 import type {Plan} from "@/models/plan.model.tsx";
 import type {arrayOutputType} from "zod";
 import type {CouponModal} from "@/models/coupon.modal.tsx";
+import type {PaymentModel} from "@/models/payment.model.tsx";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
@@ -400,7 +401,12 @@ export const updateCoupon = async (
             headers: { Authorization: `Bearer ${token}` }
         })
 
-        return response.data
+        return response.data?.success
+            ? { status: true, message: response.data.message }
+            : {
+                status: false,
+                message: response.data.message,
+            };
     } catch (error) {
         console.error(error)
         return { status: false, message: error }
@@ -422,5 +428,36 @@ export async function deleteCoupon(id: number) {
             status: false,
             message: error?.response?.data?.message,
         }
+    }
+}
+
+
+// ====================
+// 📩 Master Payment APIs
+// ====================
+
+export const AllPayment = async (page: number, size: number): Promise<{
+    data: PaymentModel[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    }; total: number } | null> => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response  = await axios.get(`${BASE_URL}/payment/get-data?page=${page}&per_page=${size}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }

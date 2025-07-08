@@ -121,7 +121,6 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
     const handleSaveButton = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
 
-
         const payload = {
             code: code,
             percentage: persen,
@@ -141,7 +140,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                 await updateCoupon(couponId, payload.code, payload.percentage, payload.plan_id, payload.action_type, payload.limit, payload.deleted_at, payload.expiry_at)
                 : await saveCoupon(payload.code, payload.percentage, payload.plan_id, payload.action_type, payload.limit, payload.deleted_at, payload.expiry_at);
 
-            if (result.success) {
+            if (result.status) {
                 onSuccess?.()
                 toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
