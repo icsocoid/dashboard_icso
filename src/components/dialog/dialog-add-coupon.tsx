@@ -84,6 +84,8 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         fetchPlans()
     }, [])
 
+    console.log(selectedPlans)
+
     useEffect(() => {
         if (couponId){
             const fetchCouponDetail = async () => {
@@ -124,7 +126,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         const payload = {
             code: code,
             percentage: persen,
-            plan_id: selectedPlans == "all"? "" : selectedPlans,
+            plan_id: selectedPlans === "all"? "" : selectedPlans,
             action_type: Number(selectedActions),
             limit: limit,
             deleted_at: dateDeleteInput? dateDeleteInput + " " + timeDeleteInput : "",
@@ -203,7 +205,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                         <div className="grid gap-3 w-full">
                             <Label>Plan</Label>
 
-                            <Select value={selectedPlans ? "all" : selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans((val))}>
+                            <Select value={selectedPlans === "null" ? "all" : selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans((val))}>
                                 <SelectTrigger className="">
                                     <SelectValue placeholder="Select plan"/>
                                 </SelectTrigger>
