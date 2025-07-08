@@ -210,7 +210,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Daftar Plan</SelectLabel>
-                                        <SelectItem value="">Select All</SelectItem>
+                                        <SelectItem value=" ">Select All</SelectItem>
                                         {plans.map((plan) => (
                                             <SelectItem
                                                 key={plan.id}
