@@ -127,8 +127,8 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
             plan_id: Number(selectedPlans),
             action_type: Number(selectedActions),
             limit: limit,
-            deleted_at: dateDeleteInput + " " + timeDeleteInput,
-            expiry_at: dateExpiredInput + " " + timeExpiredInput,
+            deleted_at: dateDeleteInput? dateDeleteInput + " " + timeDeleteInput : "",
+            expiry_at: dateExpiredInput? dateExpiredInput + " " + timeExpiredInput : "",
         };
 
         try {
