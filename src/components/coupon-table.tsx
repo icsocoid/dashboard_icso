@@ -36,7 +36,7 @@ import {
 import DialogAddCoupon from "@/components/dialog-add-coupon.tsx";
 import type {CouponModal} from "@/models/coupon.modal.tsx";
 import {useState} from "react";
-import {AllCoupon, deletePlan} from "@/api/Config.tsx";
+import {AllCoupon, deleteCoupon} from "@/api/Config.tsx";
 import {toast} from "react-toastify";
 
 export default function CouponTable() {
@@ -63,7 +63,7 @@ export default function CouponTable() {
     }
     const confirmDelete = async () => {
         if (!selectedId) return
-        const res = await deletePlan(selectedId)
+        const res = await deleteCoupon(selectedId)
         if (res.success) {
             toast.success("Data berhasil dihapus!");
             setTimeout(() => window.location.reload(), 3000);

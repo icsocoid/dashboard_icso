@@ -406,3 +406,21 @@ export const updateCoupon = async (
         return { status: false, message: "Gagal update coupon" }
     }
 }
+
+export async function deleteCoupon(id: number) {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${BASE_URL}/coupon/delete-data/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response.data
+    } catch (error: any) {
+        console.error("Gagal menghapus data:", error)
+        return {
+            status: false,
+            message: error?.response?.data?.message || "Terjadi kesalahan saat menghapus data",
+        }
+    }
+}
