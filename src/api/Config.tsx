@@ -319,7 +319,7 @@ export const AllCoupon = async (page: number, size: number): Promise<{
 export const saveCoupon = async (
     code: string,
     percentage: number,
-    plan_id: number,
+    plan_id: string,
     action_type: number,
     limit: number,
     deleted_at: string,
@@ -381,7 +381,7 @@ export const updateCoupon = async (
     id: number,
     code: string,
     percentage: number,
-    plan_id: number,
+    plan_id: string,
     action_type: number,
     limit: number,
     deleted_at: string,

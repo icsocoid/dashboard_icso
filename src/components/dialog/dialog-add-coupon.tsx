@@ -124,7 +124,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         const payload = {
             code: code,
             percentage: persen,
-            plan_id: Number(selectedPlans),
+            plan_id: selectedPlans == "all"? "" : selectedPlans,
             action_type: Number(selectedActions),
             limit: limit,
             deleted_at: dateDeleteInput? dateDeleteInput + " " + timeDeleteInput : "",
@@ -203,14 +203,14 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                         <div className="grid gap-3 w-full">
                             <Label>Plan</Label>
 
-                            <Select value={selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans((val))}>
+                            <Select value={selectedPlans ? "all" : selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans((val))}>
                                 <SelectTrigger className="">
                                     <SelectValue placeholder="Select plan"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>Daftar Plan</SelectLabel>
-                                        <SelectItem value="">Select All</SelectItem>
+                                        <SelectItem value={"all"} >Select All</SelectItem >
                                         {plans.map((plan) => (
                                             <SelectItem
                                                 key={plan.id}
