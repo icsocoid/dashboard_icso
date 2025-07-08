@@ -144,8 +144,8 @@ export default function CouponTable() {
                 <Button
                     className="ml-auto"
                     onClick={() => {
-                        setEditId(null) // reset form
-                        setOpenDialog(true)
+                        setEditId(null)
+                        setTimeout(() => setOpenDialog(true), 0)
                     }}
                     variant="outline"
                 >
@@ -159,6 +159,7 @@ export default function CouponTable() {
                     }
                 }}>
                         <DialogAddCoupon
+                            key={editId === null ? 'add' : `edit-${editId}`}
                             couponId={editId}
                             onSuccess={() => {
                                 fetchTemplates()
