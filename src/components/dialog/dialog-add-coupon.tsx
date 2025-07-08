@@ -52,7 +52,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
     const [plans, setPlans] = useState<Plan[]>([])
     const [selectedPlans, setSelectedPlans] = useState<string>("")
-    const [selectedActions, setSelectedActions] = useState<number>(0)
+    const [selectedActions, setSelectedActions] = useState<string>("")
     const [limit, setLimit] = useState<number>(0)
 
 
@@ -63,7 +63,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
             setPersen(0)
             setLimit(0)
             setSelectedPlans("")
-            setSelectedActions(0)
+            setSelectedActions("")
             setDateDeleteInput("")
             setDateExpiredInput("")
             setTimeDeleteInput("00:00:00")
@@ -96,7 +96,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                     setPersen(result.percentage)
                     setLimit(result.limit)
                     setSelectedPlans(String(result.plan_id))
-                    setSelectedActions(Number(result.action_type))
+                    setSelectedActions(result.action_type)
 
                     // split datetime: "2025-07-07 15:00:00"
                     if (result.deleted_at) {
@@ -228,7 +228,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
                         <div className="grid gap-3 w-full">
                             <Label>Action Select</Label>
-                            <Select value={selectedActions?.toString()} onValueChange={(val) => setSelectedActions(Number(val))}>
+                            <Select value={selectedActions?.toString()} onValueChange={(val) => setSelectedActions(val)}>
                                 <SelectTrigger className="">
                                     <SelectValue placeholder="Select a action"/>
                                 </SelectTrigger>
