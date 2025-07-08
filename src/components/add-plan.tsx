@@ -169,8 +169,7 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             type="text"
                                             value={nama}
                                             placeholder={"Enter Name Plan"}
-                                            onChange={(e) => setNama(e.target.value ? e.target.value : "")}
-                                            required/>
+                                            onChange={(e) => setNama(e.target.value ? e.target.value : "")}/>
                                     </div>
                                 </div>
                             </div>
@@ -188,8 +187,7 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             id="description"
                                             value={shortDeskripsi}
                                             placeholder={"Max 150 characters long"}
-                                            onChange={(e) => setShortDeskripsi(e.target.value ? e.target.value : "")}
-                                            required/>
+                                            onChange={(e) => setShortDeskripsi(e.target.value ? e.target.value : "")}/>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +312,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_akses"
                                             placeholder={"Max 150 characters long"}
-                                            required
                                             className={"mt-3"}
                                             onChange={(e) => updateFeature("akses", "description", e.target.value)}
                                             value={features.find(f => f.id === "akses")?.description || ""}
@@ -349,7 +346,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_coa"
                                             placeholder={"Max 150 characters long"}
-                                            required
                                             className={"mt-3"}
                                             onChange={(e) => updateFeature("coa", "description", e.target.value)}
                                             value={features.find(f => f.id === "coa")?.description || ""}
@@ -383,7 +379,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                         <Textarea
                                             id="deskripsi_dashboard"
                                             placeholder={"Max 150 characters long"}
-                                            required
                                             className={"mt-3"}
                                             onChange={(e) => updateFeature("dashboard", "description", e.target.value)}
                                             value={features.find(f => f.id === "dashboard")?.description || ""}
@@ -420,7 +415,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             <Textarea
                                                 id="deskripsi_invoice"
                                                 placeholder={"Max 150 characters long"}
-                                                required
                                                 className={"mt-3"}
                                                 onChange={(e) => updateFeature("printInvoice", "description", e.target.value)}
                                                 value={features.find(f => f.id === "printInvoice")?.description || ""}
@@ -460,7 +454,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             id="deskripsi_product"
                                             placeholder={"Max 150 characters long"}
                                             onChange={(e) => updateFeature("produk", "description", e.target.value)}
-                                            required
                                             className={"mt-3"}
                                             value={features.find(f => f.id === "produk")?.description || ""}
                                         />
@@ -500,8 +493,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             placeholder={"Max 150 characters long"}
                                             onChange={(e) => updateFeature("user", "description", e.target.value)}
                                             value={features.find(f => f.id === "user")?.description || ""}
-
-                                            required
                                             className={"mt-3"}
                                         />
                                     </div>
@@ -539,8 +530,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             placeholder={"Max 150 characters long"}
                                             onChange={(e) => updateFeature("pembelian", "description", e.target.value)}
                                             value={features.find(f => f.id === "pembelian")?.description || ""}
-
-                                            required
                                             className={"mt-3"}
                                         />
                                     </div>
@@ -578,7 +567,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             placeholder={"Max 150 characters long"}
                                             onChange={(e) => updateFeature("penjualan", "description", e.target.value)}
                                             value={features.find(f => f.id === "penjualan")?.description || ""}
-                                            required
                                             className={"mt-3"}
                                         />
                                     </div>
@@ -616,7 +604,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             placeholder={"Max 150 characters long"}
                                             onChange={(e) => updateFeature("storage", "description", e.target.value)}
                                             value={features.find(f => f.id === "storage")?.description || ""}
-                                            required
                                             className={"mt-3"}
                                         />
                                     </div>
