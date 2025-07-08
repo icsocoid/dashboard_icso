@@ -113,17 +113,17 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
             //const result = await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
 
             if (result.status) {
-                toast.success("Berhasil menyimpan plan!", {
+                toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
                     onClose: () => {
                         window.location.reload();
                     },
                 });
             } else {
-                toast.error("Gagal menyimpan: " + (result.message || "Unknown error"));
+                toast.error( result.message);
             }
         } catch (error: any) {
-            toast.error("Error: " + (error.message || "Terjadi kesalahan"));
+            toast.error(error.message);
         }
     };
 

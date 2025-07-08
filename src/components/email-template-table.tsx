@@ -199,12 +199,12 @@ export default function EmailTemplateTable() {
         if (!selectedId) return
         const res = await deleteTemplate(selectedId)
         if (res.status) {
-            toast.success("Template berhasil dihapus!");
+            toast.success( res.message);
             setTimeout(() => window.location.reload(), 3000);
 
             // TODO: refetch or update table here
         } else {
-            toast.error("Gagal menyimpan template: " + res.message);
+            toast.error(res.message);
         }
         setOpenDialog(false)
     }

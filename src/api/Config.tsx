@@ -32,7 +32,7 @@ export const AllEmailTemplates = async (page: number, size: number): Promise<{ d
             total: res.data?.data?.total ?? 0,
         };
     } catch (error) {
-        console.error("Gagal mengambil semua template:", error);
+        console.error(error);
         return null;
     }
 }
@@ -61,7 +61,7 @@ export const saveTemplate = async (
             return { status: false, message: res.data.message };
         }
     } catch (error: any) {
-        return { status: false, message: error.message || 'Terjadi kesalahan' };
+        return { status: false, message: error.message};
     }
 };
 
@@ -105,7 +105,7 @@ export const getTemplateById = async (id: number): Promise<{ subject: string; co
 
         return null;
     } catch (err) {
-        console.error('Gagal mengambil data:', err);
+        console.error(err);
         return null;
     }
 };
@@ -115,10 +115,10 @@ export async function deleteTemplate(id: number) {
         const response = await axios.delete(`${BASE_URL_EMAIL}/delete/${id}`)
         return response.data
     } catch (error: any) {
-        console.error("Gagal menghapus data:", error)
+        console.error(error)
         return {
             status: false,
-            message: error?.response?.data?.message || "Terjadi kesalahan saat menghapus template",
+            message: error?.response?.data?.message,
         }
     }
 }
@@ -148,7 +148,7 @@ export const AllPlan = async (page: number, size: number): Promise<{
 
         return response.data
     } catch (error) {
-        console.error("Gagal mengambil semua template:", error);
+        console.error(error);
         return null;
     }
 }
@@ -183,19 +183,19 @@ export const savePlan = async (
             ? { status: true, message: res.data.message }
             : {
                 status: false,
-                message: res.data.message || "Gagal menyimpan data",
+                message: res.data.message,
             };
     } catch (error: any) {
         if (error.response && error.response.status === 422) {
             return {
                 status: false,
-                message: error.response.data.message || "Validasi gagal",
+                message: error.response.data.message,
             };
         }
 
         return {
             status: false,
-            message: error.response?.data?.message || error.message || "Terjadi kesalahan",
+            message: error.response?.data?.message || error.message,
         };
     }
 };
@@ -228,9 +228,9 @@ export const updatePlan = async (
         });
         return res.data?.success
             ? { status: true }
-            : { status: false, message: res.data.message || "Gagal menyimpan plan" };
+            : { status: false, message: res.data.message};
     } catch (error: any) {
-        return { status: false, message: error.message || "Terjadi kesalahan" };
+        return { status: false, message: error.message };
     }
 };
 
@@ -260,7 +260,7 @@ export const getPlanById = async (id: number): Promise<{
 
         return null;
     } catch (err) {
-        console.error('Gagal mengambil data:', err);
+        console.error(err);
         return null;
     }
 };
@@ -276,10 +276,10 @@ export async function deletePlan(id: number) {
         })
         return response.data
     } catch (error: any) {
-        console.error("Gagal menghapus data:", error)
+        console.error(error)
         return {
             status: false,
-            message: error?.response?.data?.message || "Terjadi kesalahan saat menghapus data",
+            message: error?.response?.data?.message,
         }
     }
 }
@@ -310,7 +310,7 @@ export const AllCoupon = async (page: number, size: number): Promise<{
 
         return response.data
     } catch (error) {
-        console.error("Gagal mengambil semua template:", error);
+        console.error(error);
         return null;
     }
 }
@@ -346,19 +346,19 @@ export const saveCoupon = async (
             ? { status: true, message: res.data.message }
             : {
                 status: false,
-                message: res.data.message || "Gagal menyimpan data",
+                message: res.data.message,
             };
     } catch (error: any) {
         if (error.response && error.response.status === 422) {
             return {
                 status: false,
-                message: error.response.data.message || "Validasi gagal",
+                message: error.response.data.message,
             };
         }
 
         return {
             status: false,
-            message: error.response?.data?.message || error.message || "Terjadi kesalahan",
+            message: error.response?.data?.message || error.message,
         };
     }
 };
@@ -371,7 +371,7 @@ export const getCouponById = async (id: number) => {
         });
         return response.data.data; // pastikan sesuai dengan response API-mu
     } catch (error) {
-        console.error("Gagal mengambil data coupon:", error);
+        console.error(error);
         return null;
     }
 };
@@ -402,8 +402,8 @@ export const updateCoupon = async (
 
         return response.data
     } catch (error) {
-        console.error("Gagal update coupon:", error)
-        return { status: false, message: "Gagal update coupon" }
+        console.error(error)
+        return { status: false, message: error }
     }
 }
 
@@ -417,10 +417,10 @@ export async function deleteCoupon(id: number) {
         })
         return response.data
     } catch (error: any) {
-        console.error("Gagal menghapus data:", error)
+        console.error(error)
         return {
             status: false,
-            message: error?.response?.data?.message || "Terjadi kesalahan saat menghapus data",
+            message: error?.response?.data?.message,
         }
     }
 }

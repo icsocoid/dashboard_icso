@@ -34,7 +34,7 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
                                 const design = JSON.parse(template.template);
                                 editor.loadDesign(design);
                             } catch (err) {
-                                console.error("❌ Gagal parsing JSON design:", err);
+                                console.error( err);
                             }
                             clearInterval(checkEditorReady);
                         }
@@ -57,10 +57,10 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
 
 
         if (result.status) {
-            toast.success("Template berhasil disimpan!");
+            toast.success(result.message);
             setTimeout(() => window.location.reload(), 3000);
         } else {
-            toast.error("Gagal menyimpan template: " + result.message);
+            toast.error(result.message);
         }
     };
 

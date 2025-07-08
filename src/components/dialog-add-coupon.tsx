@@ -143,14 +143,14 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
             if (result.success) {
                 onSuccess?.()
-                toast.success("Berhasil menyimpan plan!", {
+                toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
                 });
             } else {
-                toast.error("Gagal menyimpan: " + (result.message || "Unknown error"));
+                toast.error(result.message);
             }
         } catch (error: any) {
-            toast.error("Error: " + (error.message || "Terjadi kesalahan"));
+            toast.error(error.message);
         }
     };
 
