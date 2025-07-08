@@ -58,7 +58,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
     // Reset form saat couponId bernilai null (tambah data baru)
     useEffect(() => {
-        if (couponId === null) {
+        if (couponId === null ) {
             setCode("")
             setPersen(0)
             setLimit(0)
