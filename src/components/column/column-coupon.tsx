@@ -51,7 +51,7 @@ export const getCouponColumns = (
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("code")}</div>,
+        cell: ({ row }) => <div >{row.getValue("code")}</div>,
     },
     {
         accessorKey: "percentage",
