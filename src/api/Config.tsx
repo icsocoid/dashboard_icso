@@ -227,6 +227,7 @@ export const updatePlan = async (
                 Authorization: `Bearer ${token}`,
             },
         });
+
         return res.data?.success
             ? { status: true }
             : { status: false, message: res.data.message};
