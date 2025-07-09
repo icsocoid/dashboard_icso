@@ -145,19 +145,21 @@ export default function CouponTable() {
                     className="ml-auto"
                     onClick={() => {
                         setEditId(null)
-                        setTimeout(() => setOpenDialog(true), 0)
+                        setOpenDialog(true)
                     }}
                     variant="outline"
                 >
                     + Coupon
                 </Button>
 
-                <Dialog open={openDialog} onOpenChange={(val) => {
-                    if (!val) {
-                        setEditId(null)
-                        setOpenDialog(false)
-                    }
-                }}>
+                <Dialog open={openDialog}
+                        key={openDialog ? 'dialog-open' : 'dialog-closed'}
+                        onOpenChange={(val) => {
+                            if (!val) {
+                                setEditId(null)
+                                setOpenDialog(false)
+                            }
+                        }}>
                         <DialogAddCoupon
                             key={editId === null ? 'add' : `edit-${editId}`}
                             couponId={editId}
