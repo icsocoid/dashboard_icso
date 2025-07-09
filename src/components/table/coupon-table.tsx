@@ -118,7 +118,7 @@ export default function CouponTable() {
                     <DialogHeader>
                         <DialogTitle>Yakin ingin menghapus?</DialogTitle>
                         <DialogDescription>
-                            Tindakan ini tidak bisa dibatalkan. Template akan dihapus secara permanen.
+                            Tindakan ini tidak bisa dibatalkan. Data akan dihapus secara permanen.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -162,7 +162,7 @@ export default function CouponTable() {
                             key={editId === null ? 'add' : `edit-${editId}`}
                             couponId={editId}
                             onSuccess={() => {
-                                fetchTemplates()
+                                fetchTemplates().catch(console.error)
                                 setOpenDialog(false)
                                 setEditId(null)
                             }}

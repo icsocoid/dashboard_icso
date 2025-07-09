@@ -1,4 +1,5 @@
 import type {ColumnDef} from "@tanstack/react-table";
+import type {Plan} from "@/models/plan.model.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {ArrowUpDown, MoreHorizontal} from "lucide-react";
@@ -8,13 +9,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
-import type {PaymentModel} from "@/models/payment.model.tsx";
+import {useNavigate} from "react-router-dom";
 
-export const getPaymentColumns = (
-    setEditId: (id: number) => void,
-    setOpenDialog: (val: boolean) => void,
-    handleDeletePayment: (id: number) => void
-): ColumnDef<PaymentModel>[] => [
+export const getPlanColumns = (
+    handleDeletePlan: (id: number) => void
+): ColumnDef<Plan>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -39,58 +38,68 @@ export const getPaymentColumns = (
     },
     {
         accessorKey: "name",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Name
-                    <ArrowUpDown />
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div>{row.getValue("name")}</div>,
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Name
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => row.getValue("name"),
     },
     {
-        accessorKey: "type",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Type
-                    <ArrowUpDown />
-                </Button>
-            )
-        },
-        cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("type")}</div>
+        accessorKey: "price_monthly",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Price Monthly
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
         ),
+        cell: ({ row }) => row.getValue("price_monthly"),
+    },
+    {
+        accessorKey: "price_yearly",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Price Yearly
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => row.getValue("price_yearly"),
+    },
+    {
+        accessorKey: "created_at",
+        header: "Created At",
+        cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString(),
     },
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const payment = row.original
+            const template = row.original
+            const navigate = useNavigate()
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
+                            <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => {
-                            setEditId(payment.id)
-                            setOpenDialog(true)
-                        }}>
+                        <DropdownMenuItem onClick={() => navigate(`/edit-plan/${template.id}`)}>
                             Edit
                         </DropdownMenuItem>
-
-                        <DropdownMenuItem onClick={() => handleDeletePayment(payment.id)}>
+                        <DropdownMenuItem onClick={() => handleDeletePlan(template.id)}>
                             Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>

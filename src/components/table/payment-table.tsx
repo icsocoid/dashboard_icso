@@ -10,13 +10,15 @@ import {
     useReactTable, type VisibilityState
 } from "@tanstack/react-table";
 import * as React from "react";
-import {AllPayment} from "@/api/Config.tsx";
+import {AllPayment, deletePayment} from "@/api/Config.tsx";
 import type {PaymentModel} from "@/models/payment.model.tsx";
 import {getPaymentColumns} from "@/components/column/column-payment.tsx";
 import {
-    Dialog,
+    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import DialogAddPayment from "@/components/dialog/dialog-add-payment.tsx";
+import {useState} from "react";
+import {toast} from "react-toastify";
 
 export default function PaymentTable() {
     const [data, setData] = React.useState<PaymentModel[]>([])
@@ -25,13 +27,32 @@ export default function PaymentTable() {
         pageIndex: 0,
         pageSize: 10,
     })
+    const [selectedId, setSelectedId] = useState<number | null>(null)
+    const [openDialogDelete, setOpenDialogDelete] = useState(false)
+
     const [totalItems, setTotalItems] = React.useState(0)
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const columns = getPaymentColumns()
     const [openDialog, setDialogOpen] = React.useState(false)
+    const [editId, setEditId] = useState<number | null>(null)
+
+    const handleDeletePayment = (id: number) => {
+        setSelectedId(id)
+        setOpenDialogDelete(true)
+    }
+    const confirmDelete = async () => {
+        if (!selectedId) return
+        const res = await deletePayment(selectedId)
+        if (res.success) {
+            toast.success("Data berhasil dihapus!");
+            await fetchTemplates()
+        } else {
+            toast.error("Gagal menyimpan template: " + res.message);
+        }
+        setOpenDialogDelete(false)
+    }
 
     const fetchTemplates = async () => {
         setLoading(true)
@@ -52,7 +73,7 @@ export default function PaymentTable() {
         fetchTemplates().catch(console.error)
     }, [pagination])
 
-
+    const columns = getPaymentColumns(setEditId, setDialogOpen, handleDeletePayment)
 
     const table = useReactTable({
         data: data,
@@ -79,7 +100,28 @@ export default function PaymentTable() {
 
     return (
 
+
         <div className="w-full">
+
+            <Dialog open={openDialogDelete}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Yakin ingin menghapus?</DialogTitle>
+                        <DialogDescription>
+                            Tindakan ini tidak bisa dibatalkan. Data akan dihapus secara permanen.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setOpenDialogDelete(false)}>
+                            Batal
+                        </Button>
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Hapus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search by name"
@@ -93,7 +135,7 @@ export default function PaymentTable() {
                 <Button
                     className="ml-auto"
                     onClick={() => {
-                        setDialogOpen(true)
+                        setTimeout(() => setDialogOpen(true), 0)
                     }}
                     variant="outline"
                 >
@@ -101,8 +143,19 @@ export default function PaymentTable() {
                 </Button>
             </div>
 
-            <Dialog open={openDialog}>
-                <DialogAddPayment />
+            <Dialog open={openDialog} onOpenChange={(val) => {
+                if (!val) {
+                    setDialogOpen(false)
+                }
+            }}>
+                <DialogAddPayment
+                    paymentId={editId}
+                    onSuccess={() => {
+                        fetchTemplates().catch(console.error)
+                        setDialogOpen(false)
+                        setEditId(null)
+                    }}
+                />
             </Dialog>
 
             <div className="rounded-md border">

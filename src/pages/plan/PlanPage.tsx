@@ -1,7 +1,7 @@
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SiteHeader} from "@/components/site-header.tsx";
-import PlanTable from "@/components/plan-table.tsx";
+import PlanTable from "@/components/table/plan-table.tsx";
 
 export default function PlanPage() {
     return (

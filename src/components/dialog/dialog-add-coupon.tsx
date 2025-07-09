@@ -88,7 +88,6 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         fetchPlans()
     }, [])
 
-    console.log(selectedPlans)
 
     useEffect(() => {
         if (couponId){
@@ -138,10 +137,6 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         };
 
         try {
-            // const result = planId ?
-            //     await updatePlan(planId, payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features)
-            //     : await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
-
             const result = couponId ?
                 await updateCoupon(couponId, payload.code, payload.percentage, payload.plan_id, payload.action_type, payload.limit, payload.deleted_at, payload.expiry_at)
                 : await saveCoupon(payload.code, payload.percentage, payload.plan_id, payload.action_type, payload.limit, payload.deleted_at, payload.expiry_at);

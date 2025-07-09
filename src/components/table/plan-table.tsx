@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-    type ColumnDef,
     type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel,
     type SortingState,
     useReactTable,
@@ -9,15 +8,7 @@ import {
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import type {Plan} from "@/models/plan.model.tsx";
-import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {ArrowUpDown, MoreHorizontal} from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.tsx";
 import {AllPlan, deletePlan} from "@/api/Config.tsx";
 import {toast} from "react-toastify";
 import {
@@ -30,6 +21,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {getPlanColumns} from "@/components/column/column-plan.tsx";
 
 export default function PlanTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -47,100 +39,10 @@ export default function PlanTable() {
     const [totalItems, setTotalItems] = React.useState(0)
     const [loading, setLoading] = React.useState(false)
 
-    const columns: ColumnDef<Plan>[] = [
-        {
-            id: "select",
-            header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                    aria-label="Select all"
-                />
-            ),
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label="Select row"
-                />
-            ),
-            enableSorting: false,
-            enableHiding: false,
-        },
-        {
-            accessorKey: "name",
-            header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            ),
-            cell: ({ row }) => row.getValue("name"),
-        },
-        {
-            accessorKey: "price_monthly",
-            header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Price Monthly
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            ),
-            cell: ({ row }) => row.getValue("price_monthly"),
-        },
-        {
-            accessorKey: "price_yearly",
-            header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Price Yearly
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            ),
-            cell: ({ row }) => row.getValue("price_yearly"),
-        },
-        {
-            accessorKey: "created_at",
-            header: "Created At",
-            cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString(),
-        },
-        {
-            id: "actions",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const template = row.original
-
-                return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/edit-plan/${template.id}`)}>
-                                Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteTemplate(template.id)}>
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                )
-            },
-        },
-    ]
+    const handleDeletePayment = (id: number) => {
+        setSelectedId(id)
+        setOpenDialog(true)
+    }
 
     React.useEffect(() => {
         const fetchTemplates = async () => {
@@ -160,6 +62,10 @@ export default function PlanTable() {
 
         fetchTemplates()
     }, [pagination])
+
+
+    const columns = getPlanColumns(handleDeletePayment);
+
 
     const table = useReactTable({
         data: data,
@@ -184,10 +90,7 @@ export default function PlanTable() {
         getFilteredRowModel: getFilteredRowModel(),
     })
 
-    const handleDeleteTemplate = (id: number) => {
-        setSelectedId(id)
-        setOpenDialog(true)
-    }
+
 
     const confirmDelete = async () => {
         if (!selectedId) return
@@ -198,7 +101,7 @@ export default function PlanTable() {
 
             // TODO: refetch or update table here
         } else {
-            toast.error("Gagal menyimpan template: " + res.message);
+            toast.error(res.message);
         }
         setOpenDialog(false)
     }
@@ -210,7 +113,7 @@ export default function PlanTable() {
                     <DialogHeader>
                         <DialogTitle>Yakin ingin menghapus?</DialogTitle>
                         <DialogDescription>
-                            Tindakan ini tidak bisa dibatalkan. Template akan dihapus secara permanen.
+                            Tindakan ini tidak bisa dibatalkan. Data akan dihapus secara permanen.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

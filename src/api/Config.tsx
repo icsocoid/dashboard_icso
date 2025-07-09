@@ -436,6 +436,54 @@ export async function deleteCoupon(id: number) {
 // 📩 Master Payment APIs
 // ====================
 
+export const savePayment = async (
+    name: string,
+    type: string,
+    logo: any,
+    bank_name: string,
+    account_name: string,
+    account_number: string,
+    description: string,
+): Promise<{ status: boolean; message?: string }> => {
+    const params = {
+        name,
+        type,
+        logo,
+        bank_name,
+        account_name,
+        account_number,
+        description
+    };
+
+    try {
+        const token = localStorage.getItem("token");
+        const res = await axios.post(`${BASE_URL}/payment-method/create-data`, params, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return res.data?.success
+            ? { status: true, message: res.data.message }
+            : {
+                status: false,
+                message: res.data.message,
+            };
+    } catch (error: any) {
+        if (error.response && error.response.status === 422) {
+            return {
+                status: false,
+                message: error.response.data.message,
+            };
+        }
+
+        return {
+            status: false,
+            message: error.response?.data?.message || error.message,
+        };
+    }
+};
+
 export const AllPayment = async (page: number, size: number): Promise<{
     data: PaymentModel[];
     meta: {
@@ -459,5 +507,72 @@ export const AllPayment = async (page: number, size: number): Promise<{
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+export const getPaymentById = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`${BASE_URL}/payment-method/detail-data/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.data; // pastikan sesuai dengan response API-mu
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const updatePayment = async (
+    id: number,
+    name: string,
+    type: string,
+    logo: any,
+    bank_name: string,
+    account_name: string,
+    account_number: string,
+    description: string,
+) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.post(`${BASE_URL}/payment-method/update-data/${id}`, {
+            name,
+            type,
+            logo,
+            bank_name,
+            account_name,
+            account_number,
+            description
+        }, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+
+        return response.data?.success
+            ? { status: true, message: response.data.message }
+            : {
+                status: false,
+                message: response.data.message,
+            };
+    } catch (error) {
+        console.error(error)
+        return { status: false, message: error }
+    }
+}
+
+export async function deletePayment(id: number) {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${BASE_URL}/payment-method/delete-data/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response.data
+    } catch (error: any) {
+        console.error(error)
+        return {
+            status: false,
+            message: error?.response?.data?.message,
+        }
     }
 }
