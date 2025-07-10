@@ -17,15 +17,17 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      // const expiredAt = Date.now() + data.token.expires_in * 1000;
-      // localStorage.setItem("token", data.token.access_token);
-      // localStorage.setItem("expired", expiredAt.toString());
+      if (data.status){
+        localStorage.setItem("user", JSON.stringify(data.karyawan));
+        navigate("/");
 
-      localStorage.setItem("user", JSON.stringify(data.karyawan));
-
-      navigate("/");
+      }else{
+        setError(data.message)
+        setTimeout(() => setError(""), 3000);
+      }
     } catch (err) {
       setError("Login gagal. Periksa email/password.");
+      setTimeout(() => setError(""), 3000);
     }
   };
   return (
@@ -37,7 +39,7 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">Welcome back</h1>
                   <p className="text-muted-foreground text-balance">
-                    Login to your Acme Inc account
+                    Login to your ICSO account
                   </p>
                 </div>
 
@@ -47,10 +49,9 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
                   <Input
                       id="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="Input Your Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      required
                   />
                 </div>
                 <div className="grid gap-3">
@@ -63,8 +64,10 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" value={password}
-                         onChange={(e) => setPassword(e.target.value)} required />
+                  <Input id="password" type="password"
+                         placeholder="Input Your Password"
+                         value={password}
+                         onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <Button type="submit" className="w-full">
                   Login

@@ -73,13 +73,9 @@ export default function PaymentTable() {
     }
 
     React.useEffect(() => {
-        fetchTemplates().catch(console.error)
-    }, [pagination])
-
-    React.useEffect(() => {
         const debounced = debounce(() => {
             fetchTemplates().catch(console.error)
-        }, 500)
+        })
 
         debounced()
 
