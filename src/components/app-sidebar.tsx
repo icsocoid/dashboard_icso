@@ -40,7 +40,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const email = karyawan.email || "guest@example.com"
     const avatar = karyawan.photo ? `data:image/jpeg;base64,${karyawan.photo}` : "/avatars/shadcn.jpg"
 
-    console.log(karyawan)
     setUserData({ name, email, avatar: avatar})
   }, [])
 

@@ -112,75 +112,79 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
     }
 
     return (
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Add Payment</DialogTitle>
-                </DialogHeader>
+        <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>{paymentId ? "Edit Payment" : "Create Payment"}</DialogTitle>
+            </DialogHeader>
 
-                {isLoadingDetail ? (
-                    <div className="flex justify-center py-10">
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
-                    </div>
-                ) : (
-                    <>
-                        <div className="grid gap-4">
-                            <div className="grid gap-3">
-                                <ImageUpload value={file} onChange={setFile}/>
-                            </div>
-                            <div className="grid gap-3">
-                                <Label htmlFor="name">Name <span className={"text-red-700"}>*</span></Label>
-                                <Input id="name" name="name" placeholder={"Name"} value={name}
-                                       onChange={(value) => setName(value.target.value ? value.target.value : "")}/>
-                            </div>
-                            <div className="grid gap-3 w-full">
-                                <Label>Type Payment <span className={"text-red-700"}>*</span></Label>
-                                <Select value={selectedType?.toString()}
-                                        onValueChange={(value) => setSelectedType(value ? value : "")}>
-                                    <SelectTrigger className="">
-                                        <SelectValue placeholder="Select a status"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="online">ONLINE</SelectItem>
-                                            <SelectItem value="offline">OFFLINE</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="grid gap-3">
-                                <Label htmlFor="bank_name">Bank Name <span className={"text-red-700"}>*</span></Label>
-                                <Input id="bank_name" name="bank_name" placeholder={"Bank Name"} value={bankName}
-                                       onChange={(value) => setBankName(value.target.value ? value.target.value : "")}/>
-                            </div>
-                            <div className="grid gap-3">
-                                <Label htmlFor="account_name">Account Name <span
-                                    className={"text-red-700"}>*</span></Label>
-                                <Input id="account_name" name="account_name" placeholder={"Account Name"}
-                                       value={bankAccountName}
-                                       onChange={(val) => setBankAccountName(val.target.value ? val.target.value : "")}/>
-                            </div>
-                            <div className="grid gap-3">
-                                <Label htmlFor="account_number">Account Number <span className={"text-red-700"}>*</span></Label>
-                                <Input id="account_number" name="account_number" placeholder={"No. Account"}
-                                       value={bankAccountNumber}
-                                       onChange={(val) => setBankAccountNumber(val.target.value ? val.target.value : "")}/>
-                            </div>
-                            <div className="grid gap-3">
-                                <Label htmlFor="description">Description </Label>
-                                <Textarea id="description" name="description" placeholder={"Enter description"}
-                                          value={description}
-                                          onChange={(val) => setDescription(val.target.value ? val.target.value : "")}/>
-                            </div>
+            <hr/>
+
+
+            {isLoadingDetail ? (
+                <div className="flex justify-center py-10">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
+                </div>
+            ) : (
+                <>
+                    <div className="grid gap-4">
+                        <div className="grid gap-3">
+                            <ImageUpload value={file} onChange={setFile}/>
                         </div>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
-                            </DialogClose>
-                            <Button type="submit" onClick={handleSubmitButton}>Save changes</Button>
-                        </DialogFooter>
-                    </>
-                )}
-            </DialogContent>
+                        <div className="grid gap-3">
+                            <Label htmlFor="name">Name <span className={"text-red-700"}>*</span></Label>
+                            <Input id="name" name="name" placeholder={"Name"} value={name}
+                                   onChange={(value) => setName(value.target.value ? value.target.value : "")}/>
+                        </div>
+                        <div className="grid gap-3 w-full">
+                            <Label>Type Payment <span className={"text-red-700"}>*</span></Label>
+                            <Select value={selectedType?.toString()}
+                                    onValueChange={(value) => setSelectedType(value ? value : "")}>
+                                <SelectTrigger className="">
+                                    <SelectValue placeholder="Select a status"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="online">ONLINE</SelectItem>
+                                        <SelectItem value="offline">OFFLINE</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="bank_name">Bank Name <span className={"text-red-700"}>*</span></Label>
+                            <Input id="bank_name" name="bank_name" placeholder={"Bank Name"} value={bankName}
+                                   onChange={(value) => setBankName(value.target.value ? value.target.value : "")}/>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="account_name">Account Name <span
+                                className={"text-red-700"}>*</span></Label>
+                            <Input id="account_name" name="account_name" placeholder={"Account Name"}
+                                   value={bankAccountName}
+                                   onChange={(val) => setBankAccountName(val.target.value ? val.target.value : "")}/>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="account_number">Account Number <span
+                                className={"text-red-700"}>*</span></Label>
+                            <Input id="account_number" name="account_number" placeholder={"No. Account"}
+                                   value={bankAccountNumber}
+                                   onChange={(val) => setBankAccountNumber(val.target.value ? val.target.value : "")}/>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="description">Description </Label>
+                            <Textarea id="description" name="description" placeholder={"Enter description"}
+                                      value={description}
+                                      onChange={(val) => setDescription(val.target.value ? val.target.value : "")}/>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button type="submit" onClick={handleSubmitButton}>Save changes</Button>
+                    </DialogFooter>
+                </>
+            )}
+        </DialogContent>
     )
 }
 

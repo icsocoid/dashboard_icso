@@ -83,7 +83,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
     useEffect(() => {
         const fetchPlans = async () => {
-            const result = await AllPlan(1, 100)
+            const result = await AllPlan(1, 100, "")
             if (result && result.data) {
                 setPlans(result.data)
             }
@@ -170,7 +170,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
         <form>
             <DialogContent className=" max-sm:max-w-[425px] sm:max-w-[425px] lg:max-w-[824px] ">
                 <DialogHeader>
-                    <DialogTitle>{couponId ? "Edit Coupon" : "Add Coupon"}</DialogTitle>
+                    <DialogTitle>{couponId ? "Edit Coupon" : "Create Coupon"}</DialogTitle>
                 </DialogHeader>
                 <hr/>
                 {isLoadingDetail ? (
