@@ -229,7 +229,7 @@ export const updatePlan = async (
         });
 
         return res.data?.success
-            ? { status: true }
+            ? { status: true, message: res.data.message }
             : { status: false, message: res.data.message};
     } catch (error: any) {
         return { status: false, message: error.message };

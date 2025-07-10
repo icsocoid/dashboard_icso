@@ -112,6 +112,7 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
 
             //const result = await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
 
+            console.log(result);
             if (result.status) {
                 toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
@@ -206,7 +207,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                                             <Input
                                                 id="trial_days"
                                                 type="number"
-                                                min={0}
                                                 placeholder="0"
                                                 className="w-full pr-12 text-right"
                                                 value={trialDays}
