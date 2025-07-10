@@ -13,12 +13,26 @@ const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 // 🔐 Auth API
 // ====================
 export async function loginUser(username: string, password: string) {
-    const response = await axios.post(`${API_URL}/login-form`, {
-        username,
-        password,
-    });
+    try {
+        const response = await axios.post(`${API_URL}/login-form`, {
+            username,
+            password,
+        });
 
-    return response.data;
+        const { status, message, karyawan } = response.data;
+
+        return {
+            status: status === true, // pastikan boolean
+            karyawan: karyawan ?? null,
+            message: message ?? "Login gagal",
+        };
+    } catch (error: any) {
+        return {
+            status: false,
+            karyawan: null,
+            message: error?.response?.data?.message || "Terjadi kesalahan jaringan",
+        };
+    }
 }
 
 // ====================

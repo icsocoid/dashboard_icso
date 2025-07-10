@@ -17,12 +17,11 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
     e.preventDefault();
     try {
       const data = await loginUser(email, password);
-      if (data.status){
+      if (data.status && data.karyawan) {
         localStorage.setItem("user", JSON.stringify(data.karyawan));
         navigate("/");
-
-      }else{
-        setError(data.message)
+      } else {
+        setError(data.message || "Login gagal");
         setTimeout(() => setError(""), 3000);
       }
     } catch (err) {
