@@ -23,118 +23,129 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-const data = {
-  user: {
-    name: `${localStorage.getItem("nama")}`,
-    email: `${localStorage.getItem("email")}`,
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Order List",
-      url: "#",
-      icon: ListIcon,
-    },
-    {
-      title: "Subscription",
-      url: "#",
-      icon: RssIcon,
-    },
-    {
-      title: "Email",
-      url: "/email-template",
-      icon: MailIcon,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: CameraIcon,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: FileTextIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: FileCodeIcon,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
-  ],
-  management: [
-    {
-      name: "Plan",
-      url: "/plan",
-      icon: StampIcon,
-    },
-    {
-      name: "Coupon",
-      url: "/coupon",
-      icon: TicketPercentIcon,
-    },
-    {
-      name: "Payment",
-      url: "/payment",
-      icon: DollarSignIcon,
-    },{
-      name: "Subscription",
-      url: "#",
-      icon: RssIcon,
-    },
-  ],
-}
+import {useEffect, useState} from "react";
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    avatar: "", // default avatar
+  })
+
+  useEffect(() => {
+    const karyawan = JSON.parse(localStorage.getItem("user") || "{}")
+    const name = karyawan.employee_name || "Guest"
+    const email = karyawan.email || "guest@example.com"
+    const avatar = karyawan.photo ? `data:image/jpeg;base64,${karyawan.photo}` : "/avatars/shadcn.jpg"
+
+    console.log(karyawan)
+    setUserData({ name, email, avatar: avatar})
+  }, [])
+
+  const data = {
+    user: userData,
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/",
+        icon: LayoutDashboardIcon,
+      },
+      {
+        title: "Order List",
+        url: "#",
+        icon: ListIcon,
+      },
+      {
+        title: "Email",
+        url: "/email-template",
+        icon: MailIcon,
+      },
+    ],
+    navClouds: [
+      {
+        title: "Capture",
+        icon: CameraIcon,
+        isActive: true,
+        url: "#",
+        items: [
+          {
+            title: "Active Proposals",
+            url: "#",
+          },
+          {
+            title: "Archived",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Proposal",
+        icon: FileTextIcon,
+        url: "#",
+        items: [
+          {
+            title: "Active Proposals",
+            url: "#",
+          },
+          {
+            title: "Archived",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Prompts",
+        icon: FileCodeIcon,
+        url: "#",
+        items: [
+          {
+            title: "Active Proposals",
+            url: "#",
+          },
+          {
+            title: "Archived",
+            url: "#",
+          },
+        ],
+      },
+    ],
+    navSecondary: [
+      {
+        title: "Settings",
+        url: "#",
+        icon: SettingsIcon,
+      },
+      {
+        title: "Get Help",
+        url: "#",
+        icon: HelpCircleIcon,
+      },
+    ],
+    management: [
+      {
+        name: "Plan",
+        url: "/plan",
+        icon: StampIcon,
+      },
+      {
+        name: "Coupon",
+        url: "/coupon",
+        icon: TicketPercentIcon,
+      },
+      {
+        name: "Payment",
+        url: "/payment",
+        icon: DollarSignIcon,
+      },{
+        name: "Subscription",
+        url: "#",
+        icon: RssIcon,
+      },
+    ],
+  }
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -157,7 +168,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {userData.name ? (
+            <NavUser user={data.user} />
+        ) : (
+            <div className="px-4 py-2 text-sm text-muted-foreground">Loading...</div>
+        )}
       </SidebarFooter>
     </Sidebar>
   )

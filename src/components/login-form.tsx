@@ -21,10 +21,7 @@ export function LoginForm({ className,...props }: React.ComponentProps<"div">) {
       // localStorage.setItem("token", data.token.access_token);
       // localStorage.setItem("expired", expiredAt.toString());
 
-      localStorage.setItem("nama", data.karyawan.employee_name);
-      localStorage.setItem("email", data.karyawan.email);
-      localStorage.setItem("kode", data.karyawan.employee_code);
-      localStorage.setItem("id", data.karyawan.id);
+      localStorage.setItem("user", JSON.stringify(data.karyawan));
 
       navigate("/");
     } catch (err) {

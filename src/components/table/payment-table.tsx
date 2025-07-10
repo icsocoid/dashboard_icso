@@ -135,7 +135,8 @@ export default function PaymentTable() {
                 <Button
                     className="ml-auto"
                     onClick={() => {
-                        setTimeout(() => setDialogOpen(true), 0)
+                        setEditId(null)
+                        setDialogOpen(true)
                     }}
                     variant="outline"
                 >
@@ -143,7 +144,9 @@ export default function PaymentTable() {
                 </Button>
             </div>
 
-            <Dialog open={openDialog} onOpenChange={(val) => {
+            <Dialog open={openDialog}
+                    key={openDialog ? 'dialog-open' : 'dialog-closed'}
+                    onOpenChange={(val) => {
                 if (!val) {
                     setDialogOpen(false)
                 }
