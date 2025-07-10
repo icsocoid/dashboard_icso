@@ -20,7 +20,6 @@ import {
     type ColumnFiltersState,
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     type SortingState,
@@ -48,6 +47,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
+import {debounce} from "lodash";
 
 export default function EmailTemplateTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -64,7 +64,23 @@ export default function EmailTemplateTable() {
     const [data, setData] = React.useState<IntEmailTemplate[]>([])
     const [totalItems, setTotalItems] = React.useState(0)
     const [loading, setLoading] = React.useState(false)
+    const [searchTerm, setSearchTerm] = React.useState("")
 
+    const fetchTemplates = async () => {
+        setLoading(true)
+        setRowSelection({})
+        const page = pagination.pageIndex + 1
+        const result = await AllEmailTemplates(page, pagination.pageSize, searchTerm)
+
+        if (result) {
+            setData(result.data)
+            setTotalItems(result.total)
+        } else {
+            console.error("Gagal mengambil data template")
+        }
+
+        setLoading(false)
+    }
     const columns: ColumnDef<IntEmailTemplate>[] = [
         {
             id: "select",
@@ -148,24 +164,19 @@ export default function EmailTemplateTable() {
     ]
 
     React.useEffect(() => {
-        const fetchTemplates = async () => {
-            setLoading(true)
-            setRowSelection({})
-            const page = pagination.pageIndex + 1
-            const result = await AllEmailTemplates(page, pagination.pageSize)
+        fetchTemplates().catch(console.error)
 
-            if (result) {
-                setData(result.data)
-                setTotalItems(result.total)
-            } else {
-                console.error("Gagal mengambil data template")
-            }
-
-            setLoading(false)
-        }
-
-        fetchTemplates()
     }, [pagination])
+
+    React.useEffect(() => {
+        const debounced = debounce(() => {
+            fetchTemplates().catch(console.error)
+        }, 500)
+
+        debounced()
+
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
     const table = useReactTable({
         data: data,
@@ -187,7 +198,6 @@ export default function EmailTemplateTable() {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     })
 
     const handleDeleteTemplate = (id: number) => {
@@ -232,11 +242,9 @@ export default function EmailTemplateTable() {
 
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter subject..."
-                    value={(table.getColumn("subject")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("subject")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
                 />
                 <DropdownMenu>

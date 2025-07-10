@@ -4,7 +4,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {
     type ColumnFiltersState,
     flexRender,
-    getCoreRowModel, getFilteredRowModel,
+    getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel, type SortingState,
     useReactTable, type VisibilityState
@@ -19,6 +19,7 @@ import {
 import DialogAddPayment from "@/components/dialog/dialog-add-payment.tsx";
 import {useState} from "react";
 import {toast} from "react-toastify";
+import {debounce} from "lodash";
 
 export default function PaymentTable() {
     const [data, setData] = React.useState<PaymentModel[]>([])
@@ -37,6 +38,8 @@ export default function PaymentTable() {
     const [rowSelection, setRowSelection] = React.useState({})
     const [openDialog, setDialogOpen] = React.useState(false)
     const [editId, setEditId] = useState<number | null>(null)
+    const [searchTerm, setSearchTerm] = React.useState("")
+
 
     const handleDeletePayment = (id: number) => {
         setSelectedId(id)
@@ -58,7 +61,7 @@ export default function PaymentTable() {
         setLoading(true)
         setRowSelection({})
         const page = pagination.pageIndex + 1
-        const result = await AllPayment(page, pagination.pageSize)
+        const result = await AllPayment(page, pagination.pageSize, searchTerm)
 
         if (result && result.data) {
             setData(result.data)
@@ -72,6 +75,16 @@ export default function PaymentTable() {
     React.useEffect(() => {
         fetchTemplates().catch(console.error)
     }, [pagination])
+
+    React.useEffect(() => {
+        const debounced = debounce(() => {
+            fetchTemplates().catch(console.error)
+        }, 500)
+
+        debounced()
+
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
     const columns = getPaymentColumns(setEditId, setDialogOpen, handleDeletePayment)
 
@@ -95,7 +108,6 @@ export default function PaymentTable() {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     })
 
     return (
@@ -124,11 +136,9 @@ export default function PaymentTable() {
 
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search by name"
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
                 />
 

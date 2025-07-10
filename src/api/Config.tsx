@@ -25,9 +25,9 @@ export async function loginUser(username: string, password: string) {
 // 📩 Email Template APIs
 // ====================
 
-export const AllEmailTemplates = async (page: number, size: number): Promise<{ data: IntEmailTemplate[]; total: number } | null> => {
+export const AllEmailTemplates = async (page: number, size: number, search: string): Promise<{ data: IntEmailTemplate[]; total: number } | null> => {
     try {
-        const res = await axios.get(`${BASE_URL_EMAIL}/all?page=${page}&per_page=${size}`);
+        const res = await axios.get(`${BASE_URL_EMAIL}/all?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`);
         return {
             data: res.data?.data?.data ?? [],
             total: res.data?.data?.total ?? 0,
@@ -128,7 +128,7 @@ export async function deleteTemplate(id: number) {
 // 📩 Master Plan APIs
 // ====================
 
-export const AllPlan = async (page: number, size: number): Promise<{
+export const AllPlan = async (page: number, size: number, search: string): Promise<{
     data: Plan[];
     meta: {
         current_page: number;
@@ -141,7 +141,7 @@ export const AllPlan = async (page: number, size: number): Promise<{
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/plan/get-data?page=${page}&per_page=${size}`, {
+        const response  = await axios.get(`${BASE_URL}/plan/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -291,7 +291,7 @@ export async function deletePlan(id: number) {
 // 📩 Master Coupon APIs
 // ====================
 
-export const AllCoupon = async (page: number, size: number): Promise<{
+export const AllCoupon = async (page: number, size: number, search: string): Promise<{
     data: CouponModal[];
     meta: {
         current_page: number;
@@ -304,7 +304,7 @@ export const AllCoupon = async (page: number, size: number): Promise<{
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/coupon/get-data?page=${page}&per_page=${size}`, {
+        const response  = await axios.get(`${BASE_URL}/coupon/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -485,7 +485,7 @@ export const savePayment = async (
     }
 };
 
-export const AllPayment = async (page: number, size: number): Promise<{
+export const AllPayment = async (page: number, size: number, search: string): Promise<{
     data: PaymentModel[];
     meta: {
         current_page: number;
@@ -498,7 +498,7 @@ export const AllPayment = async (page: number, size: number): Promise<{
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/payment-method/get-data?page=${page}&per_page=${size}`, {
+        const response  = await axios.get(`${BASE_URL}/payment-method/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

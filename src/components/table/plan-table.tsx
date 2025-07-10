@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-    type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel,
+    type ColumnFiltersState, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel,
     type SortingState,
     useReactTable,
     type VisibilityState
@@ -22,6 +22,7 @@ import {
 import {Input} from "@/components/ui/input.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {getPlanColumns} from "@/components/column/column-plan.tsx";
+import {debounce} from "lodash";
 
 export default function PlanTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -38,30 +39,42 @@ export default function PlanTable() {
     const [data, setData] = React.useState<Plan[]>([])
     const [totalItems, setTotalItems] = React.useState(0)
     const [loading, setLoading] = React.useState(false)
+    const [searchTerm, setSearchTerm] = React.useState("")
+
 
     const handleDeletePayment = (id: number) => {
         setSelectedId(id)
         setOpenDialog(true)
     }
 
-    React.useEffect(() => {
-        const fetchTemplates = async () => {
-            setLoading(true)
-            setRowSelection({})
-            const page = pagination.pageIndex + 1
-            const result = await AllPlan(page, pagination.pageSize)
+    const fetchTemplates = async () => {
+        setLoading(true)
+        setRowSelection({})
+        const page = pagination.pageIndex + 1
+        const result = await AllPlan(page, pagination.pageSize, searchTerm)
 
-            if (result && result.data) {
-                setData(result.data)
-                setTotalItems(result.meta?.total || result.data.length)
-            } else {
-                console.error("Gagal mengambil data")
-            }
-            setLoading(false)
+        if (result && result.data) {
+            setData(result.data)
+            setTotalItems(result.meta?.total || result.data.length)
+        } else {
+            console.error("Gagal mengambil data")
         }
+        setLoading(false)
+    }
 
-        fetchTemplates()
+    React.useEffect(() => {
+        fetchTemplates().catch(console.error)
     }, [pagination])
+
+    React.useEffect(() => {
+        const debounced = debounce(() => {
+            fetchTemplates().catch(console.error)
+        }, 500)
+
+        debounced()
+
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
 
     const columns = getPlanColumns(handleDeletePayment);
@@ -87,7 +100,6 @@ export default function PlanTable() {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     })
 
 
@@ -129,11 +141,9 @@ export default function PlanTable() {
 
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter nama..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
                 />
 

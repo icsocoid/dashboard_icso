@@ -3,7 +3,6 @@ import {
     type ColumnFiltersState,
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     type SortingState,
@@ -30,6 +29,7 @@ import {useState} from "react";
 import {AllCoupon, deleteCoupon} from "@/api/Config.tsx";
 import {toast} from "react-toastify";
 import {getCouponColumns} from "@/components/column/column-coupon.tsx";
+import {debounce} from "lodash";
 
 export default function CouponTable() {
     const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -47,6 +47,7 @@ export default function CouponTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [editId, setEditId] = useState<number | null>(null)
+    const [searchTerm, setSearchTerm] = React.useState("")
 
 
     const handleDeleteCoupon = (id: number) => {
@@ -70,7 +71,7 @@ export default function CouponTable() {
         setLoading(true)
         setRowSelection({})
         const page = pagination.pageIndex + 1
-        const result = await AllCoupon(page, pagination.pageSize)
+        const result = await AllCoupon(page, pagination.pageSize, searchTerm)
 
         if (result && result.data) {
             setData(result.data)
@@ -86,6 +87,16 @@ export default function CouponTable() {
     React.useEffect(() => {
         fetchTemplates().catch(console.error)
     }, [pagination.pageIndex, pagination.pageSize])
+
+    React.useEffect(() => {
+        const debounced = debounce(() => {
+            fetchTemplates().catch(console.error)
+        },500)
+
+        debounced()
+
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
     const table = useReactTable({
         data: data,
@@ -107,7 +118,6 @@ export default function CouponTable() {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     })
 
     return (
@@ -133,11 +143,9 @@ export default function CouponTable() {
             </Dialog>
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search by code"
-                    value={(table.getColumn("code")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("code")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
                 />
 
