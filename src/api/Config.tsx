@@ -175,7 +175,8 @@ export const savePlan = async (
     price_yearly: number,
     description: string,
     trial_days: number,
-    features: arrayOutputType<any>
+    features: arrayOutputType<any>,
+    features_another: arrayOutputType<any>,
 ): Promise<{ status: boolean; message?: string }> => {
     const params = {
         name,
@@ -184,6 +185,7 @@ export const savePlan = async (
         description,
         trial_days,
         features,
+        features_another
     };
 
     try {
@@ -223,7 +225,8 @@ export const updatePlan = async (
     price_yearly: number,
     description: string,
     trial_days: number,
-    features: arrayOutputType<any>
+    features: arrayOutputType<any>,
+    features_another: arrayOutputType<any>,
 ): Promise<{ status: boolean; message?: string }> => {
     const params = {
         name,
@@ -232,6 +235,7 @@ export const updatePlan = async (
         description,
         trial_days,
         features,
+        features_another
     }
     try {
         const token = localStorage.getItem("token");
@@ -451,28 +455,10 @@ export async function deleteCoupon(id: number) {
 // 📩 Master Payment APIs
 // ====================
 
-export const savePayment = async (
-    name: string,
-    type: string,
-    logo: any,
-    bank_name: string,
-    account_name: string,
-    account_number: string,
-    description: string,
-): Promise<{ status: boolean; message?: string }> => {
-    const params = {
-        name,
-        type,
-        logo,
-        bank_name,
-        account_name,
-        account_number,
-        description
-    };
-
+export const savePayment = async (formData: FormData): Promise<{ status: boolean; message?: string }> => {
     try {
         const token = localStorage.getItem("token");
-        const res = await axios.post(`${BASE_URL}/payment-method/create-data`, params, {
+        const res = await axios.post(`${BASE_URL}/payment-method/create-data`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -538,28 +524,15 @@ export const getPaymentById = async (id: number) => {
     }
 };
 
-export const updatePayment = async (
-    id: number,
-    name: string,
-    type: string,
-    logo: any,
-    bank_name: string,
-    account_name: string,
-    account_number: string,
-    description: string,
-) => {
+export const updatePayment = async (id: number, formData: FormData) => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.post(`${BASE_URL}/payment-method/update-data/${id}`, {
-            name,
-            type,
-            logo,
-            bank_name,
-            account_name,
-            account_number,
-            description
-        }, {
-            headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.post(`${BASE_URL}/payment-method/update-data/${id}`, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data"
+            }
+
         })
 
         return response.data?.success

@@ -38,7 +38,6 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
         { id: "akses", description: "", qty: 0, has_access: "no" },
         { id: "dashboard", description: "", qty: 0, has_access: "no" },
         { id: "printInvoice", description: "", qty: 0, has_access: "no" },
-
     ]);
 
     const updateFeature = (id: string, field: "qty" | "description" | "has_access", value: string | number ) => {
@@ -74,12 +73,21 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                         CUSTOM_PRINT_REPORT: "printInvoice",
                     };
 
-                    const mappedFeatures = plan.features.map((f: any) => ({
+                    const mappedFeatures = plan.features
+                        .filter((f: any) => f.feature_name !== "ANOTHER_FEATURE")
+                        .map((f: any) => ({
                         id: featureMap[f.feature_name] || f.feature_name.toLowerCase(),
                         description: f.description || "",
                         qty: f.quantity,
                         has_access: f.has_access
                     }));
+
+                    const mappedAnotherFeatures = plan.features
+                        .filter((f: any) => f.feature_name === "ANOTHER_FEATURE")
+                        .map((f: any) => ({
+                            id: crypto.randomUUID(), // karena ini bukan dari DB asli, buat id random
+                            name: f.description // sesuaikan dengan field yang kamu pakai di state fiturs
+                        }));
 
                     setFeatures(prev =>
                         prev.map(item => {
@@ -87,6 +95,14 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                             return found ? { ...item, ...found } : item;
                         })
                     );
+
+                    setFeatures(prev =>
+                        prev.map(item => {
+                            const found = mappedFeatures.find(f => f.id === item.id);
+                            return found ? { ...item, ...found } : item;
+                        })
+                    );
+                    setFiturs(mappedAnotherFeatures);
                 }
             })();
         }
@@ -103,16 +119,14 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
             description: shortDeskripsi,
             trial_days: Number(trialDays),
             features: features.map(({ id, ...rest }) => rest),
+            features_another: fiturs.map(f => ({ description: f.name }))
         };
 
         try {
             const result = planId ?
-                await updatePlan(planId, payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features)
-                : await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
+                await updatePlan(planId, payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features, payload.features_another)
+                : await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features, payload.features_another);
 
-            //const result = await savePlan(payload.name, payload.price_monthly, payload.price_yearly, payload.description, payload.trial_days, payload.features);
-
-            console.log(result);
             if (result.status) {
                 toast.success(result.message, {
                     autoClose: 3000, // dalam ms (default toastmu juga ini)
