@@ -29,15 +29,15 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
     const [popularPlan, setPopularPlan] = useState<number>()
 
     const [features, setFeatures] = useState([
+        { id: "akses", description: "", qty: 0, has_access: "no" },
+        { id: "coa", description: "", qty: 0, has_access: "no" },
+        { id: "dashboard", description: "", qty: 0, has_access: "no" },
+        { id: "printInvoice", description: "", qty: 0, has_access: "no" },
         { id: "produk", description: "", qty: 0, has_access: "yes" },
         { id: "user", description: "", qty: 0, has_access: "yes" },
         { id: "pembelian", description: "", qty: 0, has_access: "yes" },
         { id: "penjualan", description: "", qty: 0, has_access: "yes" },
         { id: "storage", description: "", qty: 0, has_access: "yes" },
-        { id: "coa", description: "", qty: 0, has_access: "no" },
-        { id: "akses", description: "", qty: 0, has_access: "no" },
-        { id: "dashboard", description: "", qty: 0, has_access: "no" },
-        { id: "printInvoice", description: "", qty: 0, has_access: "no" },
     ]);
 
     const updateFeature = (id: string, field: "qty" | "description" | "has_access", value: string | number ) => {
@@ -62,15 +62,15 @@ const PlanForm: React.FC<Props> = ({ planId }) => {
                     setPopularPlan(plan.popular_plan);
 
                     const featureMap: Record<string, string> = {
+                        PERMISSIONS: "akses",
+                        ADD_COA: "coa",
+                        ADD_DASHBOARD: "dashboard",
+                        CUSTOM_PRINT_REPORT: "printInvoice",
                         PRODUCT_LIMIT: "produk",
                         USER_LIMIT: "user",
                         PURCHASE_INVOICE_LIMIT: "pembelian",
                         SALES_INVOICE_LIMIT: "penjualan",
                         STORAGE_SIZE: "storage",
-                        ADD_COA: "coa",
-                        PERMISSIONS: "akses",
-                        ADD_DASHBOARD: "dashboard",
-                        CUSTOM_PRINT_REPORT: "printInvoice",
                     };
 
                     const mappedFeatures = plan.features
