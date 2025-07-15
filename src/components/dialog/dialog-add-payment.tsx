@@ -33,7 +33,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
     const [bankAccountNumber, setBankAccountNumber] = React.useState<string>("")
     const [description, setDescription] = React.useState<string>("")
     const [isLoadingDetail, setIsLoadingDetail] = useState(false)
-
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const resetForm = () => {
@@ -79,23 +79,25 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
 
     const handleSubmitButton = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
+        setIsLoading(true)
 
-        const params = {
-            name: name,
-            type: selectedType,
-            logo: file,
-            bank_name: bankName,
-            account_name: bankAccountName,
-            account_number: bankAccountNumber,
-            description: description,
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("type", selectedType);
+        formData.append("bank_name", bankName);
+        formData.append("account_name", bankAccountName);
+        formData.append("account_number", bankAccountNumber);
+        formData.append("description", description);
+
+        if (file) {
+            formData.append("logo", file); // logo adalah nama field yang akan diterima backend
         }
 
-        console.log(params)
 
         try {
             const result = paymentId ?
-                await updatePayment(paymentId, params.name, params.type, params.logo, params.bank_name, params.account_name, params.account_number, params.description)
-                : await savePayment(params.name, params.type, params.logo, params.bank_name, params.account_name, params.account_number, params.description)
+                await updatePayment(paymentId, formData)
+                : await savePayment(formData)
 
             if (result.status) {
                 onSuccess?.()
@@ -108,7 +110,10 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
             }
         }catch (error: any) {
             toast.error(error.message);
+        }finally {
+            setIsLoading(false);
         }
+
     }
 
     return (
@@ -118,7 +123,6 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
             </DialogHeader>
 
             <hr/>
-
 
             {isLoadingDetail ? (
                 <div className="flex justify-center py-10">
@@ -180,7 +184,20 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button type="submit" onClick={handleSubmitButton}>Save changes</Button>
+                        <Button
+                            type="submit"
+                            onClick={handleSubmitButton}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    {"Saving..."}
+                                </>
+                            ) : (
+                                paymentId ? "Edit Payment" : "Add Payment"
+                            )}
+                        </Button>
                     </DialogFooter>
                 </>
             )}

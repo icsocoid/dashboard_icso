@@ -57,6 +57,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
     const [selectedActions, setSelectedActions] = useState<string>("")
     const [limit, setLimit] = useState<number>(0)
     const [isLoadingDetail, setIsLoadingDetail] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -136,6 +137,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
     const handleSaveButton = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
+        setIsLoading(true);
 
         const payload = {
             code: code,
@@ -163,6 +165,8 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
             }
         } catch (error: any) {
             toast.error(error.message);
+        }finally {
+            setIsLoading(false)
         }
     };
 
@@ -362,8 +366,20 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                             <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button type="submit"
-                                    onClick={handleSaveButton}>{couponId ? "Edit Coupon" : "Add Coupon"}</Button>
+                            <Button
+                                type="submit"
+                                onClick={handleSaveButton}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        {"Saving..."}
+                                    </>
+                                ) : (
+                                    couponId ? "Edit Coupon" : "Add Coupon"
+                                )}
+                            </Button>
                         </DialogFooter>
                     </>
                 )}
