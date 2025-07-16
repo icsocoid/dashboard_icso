@@ -1,20 +1,12 @@
 import type {ColumnDef} from "@tanstack/react-table";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {ArrowUpDown, MoreHorizontal} from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu.tsx";
+import {ArrowUpDown, EyeIcon} from "lucide-react";
 import type {SubscriptionModel} from "@/models/subscription.model.tsx";
-import {format} from "date-fns";
 import {useNavigate} from "react-router-dom";
+import {FormatDate} from "@/utils/FormatDate.tsx";
 
-export const getSubscriptionColumns = (
-    handleDeleteCoupon: (id: number) => void
-)
+export const getSubscriptionColumns = ()
     : ColumnDef<SubscriptionModel>[] => [
     {
         id: "select",
@@ -75,7 +67,7 @@ export const getSubscriptionColumns = (
         header: () => <div>Subscription At</div>,
         cell: ({ row }) => {
             const rawDate = row.getValue("starts_at") as string;
-            const formattedDate = format(new Date(rawDate), "dd MMM, yyyy hh:mm a");
+            const formattedDate = FormatDate(rawDate)
             return <div>{formattedDate}</div>;
         },
     },
@@ -85,7 +77,7 @@ export const getSubscriptionColumns = (
         header: () => <div className="">Expiry at</div>,
         cell: ({ row }) => {
             const rawDate = row.getValue("expiry_at") as string;
-            const formattedDate = format(new Date(rawDate), "dd MMM, yyyy hh:mm a");
+            const formattedDate = FormatDate(rawDate)
             return <div>{formattedDate}</div>;
         },
 
@@ -108,34 +100,24 @@ export const getSubscriptionColumns = (
 
         },
     },
+
     {
-        id: "actions",
-        enableHiding: false,
+        accessorKey: "action",
+        header: () => <div className="">Action</div>,
         cell: ({ row }) => {
             const subs = row.original
             const navigate = useNavigate()
-
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => {
-                            navigate(`/detail-subscription/${subs.id}`)
-                        }}>
-                            Overview
-                        </DropdownMenuItem>
+                <div>
+                    <Button variant="ghost" onClick={() => {
+                        navigate(`/detail-subscription/${subs.id}`)
+                    }}>
+                        <EyeIcon /> Overview
 
-                        <DropdownMenuItem onClick={() => handleDeleteCoupon(subs.id)}>
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
+                    </Button>
+                </div>
+            );
+
         },
     },
 ]

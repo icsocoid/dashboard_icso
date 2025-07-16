@@ -1,8 +1,8 @@
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
-import {SiteHeader} from "@/components/site-header.tsx";
 import SubscriptionDetailComponent from "@/components/subscription-detail";
 import {useParams} from "react-router-dom";
+import {SiteHeaderLink} from "@/components/site-header-link.tsx";
 
 export default function SubscriptionDetail() {
     const { id } = useParams();
@@ -10,7 +10,7 @@ export default function SubscriptionDetail() {
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
-                <SiteHeader title={"Master Subscriptions Detail"} />
+                <SiteHeaderLink title={"Master Subscriptions Detail"} url={"/subscription"} />
                 <div className="p-6">
                     <SubscriptionDetailComponent  detailId={Number(id) ? Number(id) : undefined} />
                 </div>

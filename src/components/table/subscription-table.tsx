@@ -1,14 +1,5 @@
 import * as React from "react";
 import type {SubscriptionModel} from "@/models/subscription.model.tsx";
-import {useState} from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
@@ -31,8 +22,6 @@ export default function SubscriptionTable(){
         pageIndex: 0,
         pageSize: 10,
     })
-    const [selectedId, setSelectedId] = useState<number | null>(null)
-    const [openDialogDelete, setOpenDialogDelete] = useState(false)
     const [searchTerm, setSearchTerm] = React.useState("")
 
     const [totalItems, setTotalItems] = React.useState(0)
@@ -40,16 +29,6 @@ export default function SubscriptionTable(){
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-
-    const handleDeleteSubscription = (id: number) => {
-        setSelectedId(id)
-        setOpenDialogDelete(true)
-    }
-
-    const confirmDelete = async () => {
-        if (!selectedId) return
-        setOpenDialogDelete(false)
-    }
 
     const fetchTemplates = async () => {
         setLoading(true)
@@ -76,7 +55,7 @@ export default function SubscriptionTable(){
         return () => debounced.cancel()
     }, [searchTerm, pagination])
 
-    const columns = getSubscriptionColumns(handleDeleteSubscription)
+    const columns = getSubscriptionColumns()
 
     const table = useReactTable({
         data: data,
@@ -103,26 +82,6 @@ export default function SubscriptionTable(){
 
 
         <div className="w-full">
-
-            <Dialog open={openDialogDelete}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Yakin ingin menghapus?</DialogTitle>
-                        <DialogDescription>
-                            Tindakan ini tidak bisa dibatalkan. Data akan dihapus secara permanen.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setOpenDialogDelete(false)}>
-                            Batal
-                        </Button>
-                        <Button variant="destructive" onClick={confirmDelete}>
-                            Hapus
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search..."
