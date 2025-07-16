@@ -6,17 +6,19 @@ import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {toast} from "react-toastify";
 import {SiteHeaderLink} from "@/components/site-header-link.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     templateId?: number;
 }
 
 const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
+    const navigate = useNavigate();
     const [code, setCode] = useState('');
     const [subject, setSubject] = useState('');
     const editorRef = useRef<EditorRef>(null);
 
-    // Load template saat komponen mount
     useEffect(() => {
         if (templateId) {
             (async () => {
@@ -57,8 +59,8 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
 
 
         if (result.status) {
-            toast.success(result.message);
-            setTimeout(() => window.location.reload(), 3000);
+            toast.success("Berhasil Menyimpan Data!");
+            setTimeout(() => navigate("/email-template"), 1000);
         } else {
             toast.error(result.message);
         }
@@ -79,15 +81,14 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
                     />
                     <EmailEditor ref={editorRef} style={{ height: 580 }} />
                     <div style={{ marginTop: 20 }}>
-                        <button
+                        <Button
                             onClick={() => {
                                 if (editorRef.current?.editor) {
                                     editorRef.current.editor.exportHtml((data) => handleSaveTemplate(data.html, JSON.stringify(data.design)));
                                 }
-                            }}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200">
+                            }}>
                             Simpan Template
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </SidebarInset>

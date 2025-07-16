@@ -72,15 +72,16 @@ export default function EmailTemplateTable() {
         const page = pagination.pageIndex + 1
         const result = await AllEmailTemplates(page, pagination.pageSize, searchTerm)
 
-        if (result) {
+        if (result && result.data) {
             setData(result.data)
-            setTotalItems(result.total)
+            setTotalItems(result.total || result.data.length)
         } else {
             console.error("Gagal mengambil data template")
         }
 
         setLoading(false)
     }
+
     const columns: ColumnDef<IntEmailTemplate>[] = [
         {
             id: "select",
@@ -138,6 +139,7 @@ export default function EmailTemplateTable() {
         {
             id: "actions",
             enableHiding: false,
+
             cell: ({ row }) => {
                 const template = row.original
 
@@ -150,6 +152,9 @@ export default function EmailTemplateTable() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => navigate(`/email-template-overview/${template.id}`)}>
+                                Overview
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => navigate(`/email-template-edit/${template.id}`)}>
                                 Edit
                             </DropdownMenuItem>
@@ -164,14 +169,9 @@ export default function EmailTemplateTable() {
     ]
 
     React.useEffect(() => {
-        fetchTemplates().catch(console.error)
-
-    }, [pagination])
-
-    React.useEffect(() => {
         const debounced = debounce(() => {
             fetchTemplates().catch(console.error)
-        }, 500)
+        })
 
         debounced()
 

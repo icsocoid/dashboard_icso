@@ -172,34 +172,36 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
     return (
         <form>
-            <DialogContent className=" max-sm:max-w-[425px] sm:max-w-[425px] lg:max-w-[824px] ">
+            <DialogContent
+                className="w-full max-w-full sm:max-w-[425px] lg:max-w-[720px] max-h-screen overflow-y-auto"
+            >
                 <DialogHeader>
                     <DialogTitle>{couponId ? "Edit Coupon" : "Create Coupon"}</DialogTitle>
                 </DialogHeader>
-                <hr/>
+                <hr />
                 {isLoadingDetail ? (
                     <div className="flex justify-center py-10">
-                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                 ) : (
                     <>
                         <div className="grid gap-4">
                             <div className="grid gap-3">
                                 <Label htmlFor="code_input">Code</Label>
-                                <Input id="code_input" name="code" value={code}
-                                       onChange={(e) => setCode(e.target.value ? e.target.value : "")}/>
-
+                                <Input id="code_input" name="code" value={code} onChange={(e) => setCode(e.target.value)} />
                             </div>
 
-                            <div className="flex gap-4">
+                            {/* Responsive Row */}
+                            <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="grid gap-3 w-full">
                                     <Label htmlFor="persen_input">Percentage(%)</Label>
                                     <Input
                                         id="persen_input"
                                         name="percentage"
-                                        type={"number"}
+                                        type="number"
                                         value={persen}
-                                        onChange={(e) => setPersen(Number(e.target.value) ? Number(e.target.value) : 0)}/>
+                                        onChange={(e) => setPersen(Number(e.target.value) || 0)}
+                                    />
                                 </div>
 
                                 <div className="grid gap-3 w-full">
@@ -208,39 +210,33 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                         <Input
                                             id="limit_input"
                                             type="number"
-                                            name={"limit"}
+                                            name="limit"
                                             min={0}
                                             placeholder="0"
                                             className="pr-12"
                                             value={limit}
-                                            onChange={(e) => setLimit(Number(e.target.value) ? Number(e.target.value) : 0)}
+                                            onChange={(e) => setLimit(Number(e.target.value) || 0)}
                                         />
-                                        <span
-                                            className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
-                                    QTY
-                                </span>
+                                        <span className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                                QTY
+                            </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="grid gap-3 w-full">
                                     <Label>Plan</Label>
-
-                                    <Select value={selectedPlans?.toString()}
-                                            onValueChange={(val) => setSelectedPlans((val))}>
-                                        <SelectTrigger className="">
-                                            <SelectValue placeholder="Select plan"/>
+                                    <Select value={selectedPlans?.toString()} onValueChange={(val) => setSelectedPlans(val)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select plan" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Daftar Plan</SelectLabel>
-                                                <SelectItem value={"0"}>Select All</SelectItem>
+                                                <SelectItem value="0">Select All</SelectItem>
                                                 {plans.map((plan) => (
-                                                    <SelectItem
-                                                        key={plan.id}
-                                                        value={plan.id.toString()}
-                                                    >
+                                                    <SelectItem key={plan.id} value={plan.id.toString()}>
                                                         {plan.name}
                                                     </SelectItem>
                                                 ))}
@@ -251,10 +247,9 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
 
                                 <div className="grid gap-3 w-full">
                                     <Label>Action Select</Label>
-                                    <Select value={selectedActions?.toString()}
-                                            onValueChange={(val) => setSelectedActions(val)}>
-                                        <SelectTrigger className="">
-                                            <SelectValue placeholder="Select a action"/>
+                                    <Select value={selectedActions?.toString()} onValueChange={(val) => setSelectedActions(val)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select an action" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
@@ -267,23 +262,16 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                 </div>
                             </div>
 
-
-                            <div className="flex flex-row gap-3">
-                                <div className="grid gap-3 basis-10/12">
-                                    <Label htmlFor="deleted" className="px-1">
-                                        Delete Date Time
-                                    </Label>
-
-                                    <div className="flex gap-3 ">
+                            <div className="flex flex-col lg:flex-row gap-4">
+                                {/* Delete Date Time */}
+                                <div className="grid gap-3 w-full">
+                                    <Label htmlFor="deleted">Delete Date Time</Label>
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         <Popover open={openDeleteTime} onOpenChange={setOpenDeleteTime}>
                                             <PopoverTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    id="deleted"
-                                                    className=" font-normal w-full"
-                                                >
+                                                <Button variant="outline" id="deleted" className="font-normal w-full">
                                                     {dateDeleteTime ? format(dateDeleteTime, "dd MMMM yyyy") : "Select date"}
-                                                    <ChevronDownIcon/>
+                                                    <ChevronDownIcon />
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -293,42 +281,32 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                                     captionLayout="dropdown"
                                                     onSelect={(date) => {
                                                         const formatted = date ? format(date, "yyyy-MM-d") : "";
-                                                        setDateDeleteInput(formatted)
-                                                        setDateDeleteTime(date)
-                                                        setOpenDeleteTime(false)
+                                                        setDateDeleteInput(formatted);
+                                                        setDateDeleteTime(date);
+                                                        setOpenDeleteTime(false);
                                                     }}
                                                 />
                                             </PopoverContent>
                                         </Popover>
-
-                                        <div className="w-full">
-                                            <Input
-                                                type="time"
-                                                id="time-picker"
-                                                step="1"
-                                                defaultValue="00:00:00"
-                                                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                                onChange={(e) => setTimeDeleteInput(e.target.value)}
-                                            />
-                                        </div>
+                                        <Input
+                                            type="time"
+                                            step="1"
+                                            defaultValue="00:00:00"
+                                            className="w-full bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden"
+                                            onChange={(e) => setTimeDeleteInput(e.target.value)}
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="grid gap-3 basis-10/12">
-                                    <Label htmlFor="expired" className="px-1">
-                                        Expired Date Time
-                                    </Label>
-
-                                    <div className="flex gap-3">
+                                {/* Expired Date Time */}
+                                <div className="grid gap-3 w-full">
+                                    <Label htmlFor="expired">Expired Date Time</Label>
+                                    <div className="flex flex-col sm:flex-row gap-3">
                                         <Popover open={openExpired} onOpenChange={setOpenExpired}>
                                             <PopoverTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    id="expired"
-                                                    className=" font-normal w-full"
-                                                >
+                                                <Button variant="outline" id="expired" className="font-normal w-full">
                                                     {dateExpired ? format(dateExpired, "dd MMMM yyyy") : "Select date"}
-                                                    <ChevronDownIcon/>
+                                                    <ChevronDownIcon />
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -338,43 +316,34 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                                                     captionLayout="dropdown"
                                                     onSelect={(date) => {
                                                         const formatted = date ? format(date, "yyyy-MM-d") : "";
-                                                        setDateExpiredInput(formatted)
-                                                        setDateExpired(date)
-                                                        setOpenExpired(false)
+                                                        setDateExpiredInput(formatted);
+                                                        setDateExpired(date);
+                                                        setOpenExpired(false);
                                                     }}
                                                 />
                                             </PopoverContent>
                                         </Popover>
-
-                                        <div className="w-full">
-                                            <Input
-                                                type="time"
-                                                id="time-picker"
-                                                step="1"
-                                                defaultValue="00:00:00"
-                                                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                                onChange={(e) => setTimeExpiredInput(e.target.value)}
-                                            />
-                                        </div>
+                                        <Input
+                                            type="time"
+                                            step="1"
+                                            defaultValue="00:00:00"
+                                            className="w-full bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden"
+                                            onChange={(e) => setTimeExpiredInput(e.target.value)}
+                                        />
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
+
                         <DialogFooter>
                             <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
-                            <Button
-                                type="submit"
-                                onClick={handleSaveButton}
-                                disabled={isLoading}
-                            >
+                            <Button type="submit" onClick={handleSaveButton} disabled={isLoading}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        {"Saving..."}
+                                        Saving...
                                     </>
                                 ) : (
                                     couponId ? "Edit Coupon" : "Add Coupon"
@@ -384,6 +353,7 @@ const DialogAddCoupon: React.FC<Props> = ({couponId, onSuccess}) => {
                     </>
                 )}
             </DialogContent>
+
         </form>
     );
 }

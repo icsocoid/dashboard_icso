@@ -12,10 +12,12 @@ import CouponPage from "@/pages/coupon/CouponPage.tsx";
 import PaymentPage from "@/pages/payment/PaymentPage.tsx";
 import SubscriptionPage from "@/pages/subscription/SubscriptionPage.tsx";
 import SubscriptionDetail from "@/pages/subscription/SubscriptionDetail.tsx";
+import EmailView from "@/pages/email/EmailView.tsx";
 
 const privateRoutes = [
     { path: "/", element: <Dashboard /> },
     { path: "/email-template", element: <EmailTemplate /> },
+    { path: "/email-template-overview/:id", element: <EmailView /> },
     { path: "/email-template-add", element: <EmailTemplateEditor /> },
     { path: "/email-template-edit/:id", element: <EmailEditor /> },
     { path: "/plan", element: <PlanPage /> },
