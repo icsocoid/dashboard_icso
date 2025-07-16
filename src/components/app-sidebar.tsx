@@ -139,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: DollarSignIcon,
       },{
         name: "Subscription",
-        url: "#",
+        url: "/subscription",
         icon: RssIcon,
       },
     ],

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 
 export default function AddPlanPage() {
 
-    const { id } = useParams(); // ambil dari URL jika ada
+    const { id } = useParams();
     return (
         <SidebarProvider>
             <AppSidebar variant="inset" />

@@ -4,6 +4,7 @@ import type {Plan} from "@/models/plan.model.tsx";
 import type {arrayOutputType} from "zod";
 import type {CouponModal} from "@/models/coupon.modal.tsx";
 import type {PaymentModel} from "@/models/payment.model.tsx";
+import type {SubscriptionModel} from "@/models/subscription.model.tsx";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
@@ -564,3 +565,47 @@ export async function deletePayment(id: number) {
         }
     }
 }
+
+// ====================
+// 📩 Subscription APIs
+// ====================
+
+export const AllSubscription = async (page: number, size: number, search: string): Promise<{
+    data: SubscriptionModel[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    }; total: number } | null> => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response  = await axios.get(`${BASE_URL}/subscribe/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const getSubscribeById = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`${BASE_URL}/subscribe/detail-data/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+

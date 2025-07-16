@@ -10,6 +10,8 @@ import AddPlanPage from "@/pages/plan/AddPlanPage.tsx";
 import PlanPage from "@/pages/plan/PlanPage.tsx";
 import CouponPage from "@/pages/coupon/CouponPage.tsx";
 import PaymentPage from "@/pages/payment/PaymentPage.tsx";
+import SubscriptionPage from "@/pages/subscription/SubscriptionPage.tsx";
+import SubscriptionDetail from "@/pages/subscription/SubscriptionDetail.tsx";
 
 const privateRoutes = [
     { path: "/", element: <Dashboard /> },
@@ -22,6 +24,8 @@ const privateRoutes = [
     { path: "/coupon", element: <CouponPage /> },
     { path: "/edit-coupon/:id", element: <CouponPage /> },
     { path: "/payment", element: <PaymentPage /> },
+    { path: "/subscription", element: <SubscriptionPage /> },
+    { path: "/detail-subscription/:id", element: <SubscriptionDetail /> },
 ]
 
 const App: React.FC = () => {
