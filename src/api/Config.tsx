@@ -5,10 +5,12 @@ import type {arrayOutputType} from "zod";
 import type {CouponModal} from "@/models/coupon.modal.tsx";
 import type {PaymentModel} from "@/models/payment.model.tsx";
 import type {SubscriptionModel} from "@/models/subscription.model.tsx";
+import type {UsersModel} from "@/models/users.model.tsx";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
 const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
+const BASE_USERS_URL = "https://authapi.als.today/api";
 
 // ====================
 // 🔐 Auth API
@@ -609,3 +611,76 @@ export const getSubscribeById = async (id: number) => {
     }
 };
 
+// ====================
+// 📩 Users APIs
+// ====================
+
+export const AllUsers = async (page: number, size: number, search: string): Promise<{
+    data: UsersModel[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    }; total: number } | null> => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response  = await axios.get(`${BASE_USERS_URL}/users/list?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const getUserById = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`${BASE_USERS_URL}/users/detail/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const updateUser = async (id: number, name:string, email:string, phone:number, password:string) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.put(`${BASE_USERS_URL}/users/edit/${id}?name=${name}&email=${email}&phone=${phone}&password=${password}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export async function deleteUser(id: number) {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${BASE_USERS_URL}/users/delete-data/${id}`,{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        return response.data
+    } catch (error: any) {
+        console.error(error)
+        return {
+            status: false,
+            message: error?.response?.data?.message,
+        }
+    }
+}

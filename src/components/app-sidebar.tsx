@@ -7,7 +7,7 @@ import {
   HelpCircleIcon,
   LayoutDashboardIcon,
   ListIcon, MailIcon, RssIcon,
-  SettingsIcon, StampIcon, TicketPercentIcon,
+  SettingsIcon, StampIcon, TicketPercentIcon, UsersIcon,
 } from "lucide-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -141,6 +141,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: "Subscription",
         url: "/subscription",
         icon: RssIcon,
+      },
+      {
+        name: "User",
+        url: "/user-management",
+        icon: UsersIcon,
       },
     ],
   }
