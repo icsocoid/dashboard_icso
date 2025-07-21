@@ -34,7 +34,6 @@ const privateRoutes = [
     { path: "/user-management", element: <UserPage /> },
     { path: "/user-management-edit/:id", element: <UserEditPage /> },
     { path: "/user-management-overview/:id", element: <UserViewPage /> },
-
 ]
 
 const App: React.FC = () => {
