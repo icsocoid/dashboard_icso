@@ -117,8 +117,7 @@ const UserForm: React.FC<Props> = ({userId}) => {
 
                             <div className="flex flex-col mt-3">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="name">Phone Number: <span
-                                        className={"text-red-700"}>*</span></Label>
+                                    <Label htmlFor="name">Phone Number:</Label>
                                 </div>
                                 <div className="basis-1/2 mt-3">
                                     <input
@@ -133,8 +132,7 @@ const UserForm: React.FC<Props> = ({userId}) => {
 
                             <div className="flex flex-col mt-3">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="name">Password: <span
-                                        className={"text-red-700"}>*</span></Label>
+                                    <Label htmlFor="name">Password:</Label>
                                 </div>
                                 <div className="basis-1/2 mt-3">
                                     <input
