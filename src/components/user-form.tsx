@@ -102,14 +102,13 @@ const UserForm: React.FC<Props> = ({userId}) => {
 
                             <div className="flex flex-col mt-3">
                                 <div className="basis-2/3  flex items-center space-x-2 flex-auto">
-                                    <Label htmlFor="name">Email: <span
-                                        className={"text-red-700"}>*</span></Label>
+                                    <Label htmlFor="name">Email:</Label>
                                 </div>
                                 <div className="basis-1/2 mt-3">
                                     <input
                                         type="text"
                                         value={email}
-                                        readOnly
+                                        disabled
                                         onChange={(e) => setEmail(e.target.value)}
                                         className={"w-full bg-white border-2 rounded-lg shadow-sm"}
                                         style={{padding: 8}}
