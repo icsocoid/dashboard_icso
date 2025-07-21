@@ -60,7 +60,8 @@ const UserForm: React.FC<Props> = ({userId}) => {
                         setName(result.user.name);
                         setEmail(result.user.email);
                         setPhone(result.user.phone);
-                    }            }finally {
+                    }
+                }finally {
                     setIsLoading(false)
                 }
 
