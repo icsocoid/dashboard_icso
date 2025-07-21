@@ -109,7 +109,6 @@ const UserForm: React.FC<Props> = ({userId}) => {
                                         type="text"
                                         value={email}
                                         disabled
-                                        onChange={(e) => setEmail(e.target.value)}
                                         className={"w-full bg-white border-2 rounded-lg shadow-sm"}
                                         style={{padding: 8}}
                                     />
