@@ -462,7 +462,7 @@ export async function deleteCoupon(id: number) {
 export const savePayment = async (formData: FormData): Promise<{ status: boolean; message?: string }> => {
     try {
         const token = localStorage.getItem("token");
-        const res = await axios.post(`${BASE_URL}/payment-method/create-data`, formData, {
+        const res = await axios.post(`${BASE_NEW_URL}/payment-method/create-data`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
