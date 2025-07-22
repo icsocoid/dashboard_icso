@@ -11,6 +11,7 @@ const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://apibilling.icso.biz.id/public/api"
 const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 const BASE_USERS_URL = "https://authapi.als.today/api";
+const BASE_NEW_URL = "https://als-billing-service.icso.biz.id/api";
 
 // ====================
 // 🔐 Auth API
@@ -501,7 +502,7 @@ export const AllPayment = async (page: number, size: number, search: string): Pr
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/payment-method/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
+        const response  = await axios.get(`${BASE_NEW_URL}/payment-method/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -517,7 +518,7 @@ export const AllPayment = async (page: number, size: number, search: string): Pr
 export const getPaymentById = async (id: number) => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get(`${BASE_URL}/payment-method/detail-data/${id}`, {
+        const response = await axios.get(`${BASE_NEW_URL}/payment-method/detail-data/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data.data; // pastikan sesuai dengan response API-mu
@@ -530,7 +531,7 @@ export const getPaymentById = async (id: number) => {
 export const updatePayment = async (id: number, formData: FormData) => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.post(`${BASE_URL}/payment-method/update-data/${id}`, formData, {
+        const response = await axios.post(`${BASE_NEW_URL}/payment-method/update-data/${id}`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "multipart/form-data"
@@ -553,7 +554,7 @@ export const updatePayment = async (id: number, formData: FormData) => {
 export async function deletePayment(id: number) {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(`${BASE_URL}/payment-method/delete-data/${id}`,{
+        const response = await axios.delete(`${BASE_NEW_URL}/payment-method/delete-data/${id}`,{
             headers: {
                 Authorization: `Bearer ${token}`,
             },

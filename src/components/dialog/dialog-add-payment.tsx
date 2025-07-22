@@ -90,7 +90,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
         formData.append("description", description);
 
         if (file) {
-            formData.append("logo", file); // logo adalah nama field yang akan diterima backend
+            formData.append("logo", file);
         }
 
 
