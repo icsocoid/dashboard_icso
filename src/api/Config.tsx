@@ -655,10 +655,10 @@ export const getUserById = async (id: number) => {
     }
 };
 
-export const updateUser = async (id: number, name:string, email:string, phone:number, password:string) => {
+export const updateUser = async (id: number, name: string, email: string, phone: number, password: string, statusUser: string, emailVerified: string) => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.put(`${BASE_USERS_URL}/users/edit/${id}?name=${name}&email=${email}&phone=${phone}&password=${password}`, {
+        const response = await axios.put(`${BASE_USERS_URL}/users/edit/${id}?name=${name}&email=${email}&phone=${phone}&password=${password}$status_user=${statusUser}&email_verified_at=${emailVerified}`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;

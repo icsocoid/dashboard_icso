@@ -104,9 +104,60 @@ export const getUsersColumns = (
             <div className="capitalize">{row.getValue("company_name")}</div>
         ),
     },
+
+    {
+        accessorKey: "email_verified_at",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Verifikasi Email
+                    <ArrowUpDown />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+            if (row.getValue("email_verified_at") !== null) {
+                return (<div className="capitalize text-center">{row.getValue("email_verified_at")}</div>)
+            }else{
+                return (<div className="capitalize text-center"> - </div>)
+
+            }
+        }
+    },
+
+    {
+        accessorKey: "status_user",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Nama Perusahaan
+                    <ArrowUpDown />
+                </Button>
+            )
+        },
+
+        cell: ({ row }) => {
+            const status:string  = row.getValue("status_user")
+            return (
+                <div
+                    className={`inline-flex items-center  px-3 py-1 rounded-full text-white text-sm font-semibold ${
+                        status ===  "active" ? 'bg-green-500' : 'bg-red-400'
+                    }`}
+                >
+                    {status === "active" ? 'Active' : 'Inactive'}
+                </div>
+            )
+        },
+    },
     {
         accessorKey: "created_at",
-        cell: ({ row }) => (
+        cell: ({row}) => (
             <div className="capitalize">{row.getValue("created_at")}</div>
         ),
     },
