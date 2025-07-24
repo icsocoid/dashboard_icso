@@ -8,7 +8,7 @@ import type {SubscriptionModel} from "@/models/subscription.model.tsx";
 import type {UsersModel} from "@/models/users.model.tsx";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
-const BASE_URL = "https://als-billing-service.icso.biz.id/public/api"
+const BASE_URL = "https://als-billing-service.icso.biz.id/api"
 const API_URL = "https://als.icso.biz.id/public/api"; //Login Auth API
 const BASE_USERS_URL = "https://authapi.als.today/api";
 
