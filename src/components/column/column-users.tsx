@@ -136,7 +136,7 @@ export const getUsersColumns = (
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Nama Perusahaan
+                    Status
                     <ArrowUpDown />
                 </Button>
             )

@@ -40,15 +40,12 @@ const UserForm: React.FC<Props> = ({userId}) => {
         try{
             const response = userId ? await updateUser(userId, payload.name, payload.email, payload.phone, payload.password, payload.switch_account, payload.switch_email) : "Gagal Update Data"
 
-            console.log(response)
-
             if (response.status) {
                 toast.success(response.message, {
                     autoClose: 3000,
-                    onClose: () => {
-                        window.location.reload();
-                    },
                 });
+                fetchUser().catch(console.error)
+
             } else {
                 toast.error( response.message);
             }
@@ -58,23 +55,26 @@ const UserForm: React.FC<Props> = ({userId}) => {
         }
     }
 
+    const fetchUser = async () => {
+        if (!userId) return;
+
+        const data = await fetchMappedUserDetail(userId);
+        setUserDetail(data);
+        setIsLoading(false);
+
+        setName(data.name);
+        setPhone(data.phone);
+        setEmail(data.email);
+        setSwitchAccount(data.switchAccount);
+        setSwitchEmail(data.switchEmail);
+    };
+
 
     useEffect(() => {
-        if (!userId) return;
         setIsLoading(true);
-        const fetchUser = async () => {
-            const data = await fetchMappedUserDetail(userId);
-            setUserDetail(data);
-            setIsLoading(false);
 
-            setName(data.name);
-            setPhone(data.phone);
-            setEmail(data.email);
-            setSwitchAccount(data.switchAccount);
-            setSwitchEmail(data.switchEmail);
-        };
 
-        fetchUser().catch(console.log);
+        fetchUser().catch(console.error);
     }, [userId]);
 
 
