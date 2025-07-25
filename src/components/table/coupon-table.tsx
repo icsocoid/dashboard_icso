@@ -84,19 +84,22 @@ export default function CouponTable() {
 
     const columns = getCouponColumns(setEditId, setOpenDialog, handleDeleteCoupon)
 
-    React.useEffect(() => {
-        fetchTemplates().catch(console.error)
-    }, [pagination.pageIndex, pagination.pageSize])
-
+    // Search term pakai debounce
     React.useEffect(() => {
         const debounced = debounce(() => {
-            fetchTemplates().catch(console.error)
-        },500)
+            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman 1
+            fetchTemplates().catch(console.error);
+        }, 500);
 
-        debounced()
+        debounced();
+        return () => debounced.cancel();
+    }, [searchTerm]);
 
-        return () => debounced.cancel()
-    }, [searchTerm, pagination])
+// Pagination biasa (tanpa debounce)
+    React.useEffect(() => {
+        fetchTemplates().catch(console.error);
+    }, [pagination.pageIndex, pagination.pageSize]);
+
 
     const table = useReactTable({
         data: data,

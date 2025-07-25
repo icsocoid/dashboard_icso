@@ -72,15 +72,21 @@ export default function PaymentTable() {
         setLoading(false)
     }
 
+    // Untuk pencarian (pakai debounce)
     React.useEffect(() => {
         const debounced = debounce(() => {
+            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman awal
             fetchTemplates().catch(console.error)
-        })
+        }, 500)
 
         debounced()
-
         return () => debounced.cancel()
-    }, [searchTerm, pagination])
+    }, [searchTerm])
+
+// Untuk pagination (langsung fetch)
+    React.useEffect(() => {
+        fetchTemplates().catch(console.error)
+    }, [pagination])
 
     const columns = getPaymentColumns(setEditId, setDialogOpen, handleDeletePayment)
 

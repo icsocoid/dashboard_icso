@@ -62,19 +62,21 @@ export default function PlanTable() {
         setLoading(false)
     }
 
-    React.useEffect(() => {
-        fetchTemplates().catch(console.error)
-    }, [pagination])
-
+    // Search term pakai debounce
     React.useEffect(() => {
         const debounced = debounce(() => {
-            fetchTemplates().catch(console.error)
-        }, 500)
+            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman 1
+            fetchTemplates().catch(console.error);
+        }, 500);
 
-        debounced()
+        debounced();
+        return () => debounced.cancel();
+    }, [searchTerm]);
 
-        return () => debounced.cancel()
-    }, [searchTerm, pagination])
+    // Pagination biasa (tanpa debounce)
+    React.useEffect(() => {
+        fetchTemplates().catch(console.error);
+    }, [pagination]);
 
 
     const columns = getPlanColumns(handleDeletePayment);
@@ -102,16 +104,13 @@ export default function PlanTable() {
         getSortedRowModel: getSortedRowModel(),
     })
 
-
-
     const confirmDelete = async () => {
         if (!selectedId) return
         const res = await deletePlan(selectedId)
         if (res.success) {
             toast.success("Data berhasil dihapus!");
-            setTimeout(() => window.location.reload(), 3000);
+            await fetchTemplates();
 
-            // TODO: refetch or update table here
         } else {
             toast.error(res.message);
         }

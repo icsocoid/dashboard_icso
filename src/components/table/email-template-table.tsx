@@ -28,16 +28,16 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button.tsx"
+import { Checkbox } from "@/components/ui/checkbox.tsx"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu.tsx"
+import { Input } from "@/components/ui/input.tsx"
 import {
     Table,
     TableBody,
@@ -45,7 +45,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table.tsx"
 import type {IntEmailTemplate} from "@/models/email-template.model.tsx";
 import {debounce} from "lodash";
 
@@ -168,15 +168,21 @@ export default function EmailTemplateTable() {
         },
     ]
 
+    // Untuk pencarian (pakai debounce)
     React.useEffect(() => {
         const debounced = debounce(() => {
+            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman awal
             fetchTemplates().catch(console.error)
-        })
+        }, 500)
 
         debounced()
-
         return () => debounced.cancel()
-    }, [searchTerm, pagination])
+    }, [searchTerm])
+
+    // Untuk pagination (langsung fetch)
+    React.useEffect(() => {
+        fetchTemplates().catch(console.error)
+    }, [pagination])
 
     const table = useReactTable({
         data: data,
