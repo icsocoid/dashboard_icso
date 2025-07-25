@@ -67,39 +67,45 @@ export default function CouponTable() {
         setOpenDialogDelete(false)
     }
 
-    const fetchTemplates = async () => {
+    const fetchTemplates = async (signal?: AbortSignal) => {
         setLoading(true)
-        setRowSelection({})
-        const page = pagination.pageIndex + 1
-        const result = await AllCoupon(page, pagination.pageSize, searchTerm)
+        try {
+            setRowSelection({})
+            const page = pagination.pageIndex + 1
+            const result = await AllCoupon(page, pagination.pageSize, searchTerm, signal)
 
-        if (result && result.data) {
-            setData(result.data)
-            setTotalItems(result.meta?.total || result.data.length)
-        } else {
-            console.error("Gagal mengambil data")
+            if (result && result.data) {
+                setData(result.data)
+                setTotalItems(result.meta.total)
+            } else {
+                console.error("Gagal mengambil data")
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false); // selesai loading
         }
-        setLoading(false)
     }
 
     const columns = getCouponColumns(setEditId, setOpenDialog, handleDeleteCoupon)
 
-    // Search term pakai debounce
     React.useEffect(() => {
+        const controller = new AbortController()
+        const signal = controller.signal
+
         const debounced = debounce(() => {
-            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman 1
-            fetchTemplates().catch(console.error);
-        }, 500);
+            fetchTemplates(signal).catch((e) => {
+                if (e.name !== "AbortError") console.error(e)
+            })
+        }, 300)
 
-        debounced();
-        return () => debounced.cancel();
-    }, [searchTerm]);
+        debounced()
 
-// Pagination biasa (tanpa debounce)
-    React.useEffect(() => {
-        fetchTemplates().catch(console.error);
-    }, [pagination.pageIndex, pagination.pageSize]);
-
+        return () => {
+            controller.abort()
+            debounced.cancel()
+        }
+    }, [searchTerm, pagination.pageIndex, pagination.pageSize])
 
     const table = useReactTable({
         data: data,
@@ -205,10 +211,18 @@ export default function CouponTable() {
                     </TableHeader>
                     <TableBody>
                         {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
-                                </TableRow>
-                            ) : table.getRowModel().rows?.length ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    Loading...
+                                </TableCell>
+                            </TableRow>
+                        ) : data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -216,23 +230,11 @@ export default function CouponTable() {
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
-                            </TableRow>
                         )}
                     </TableBody>
                 </Table>

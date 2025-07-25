@@ -62,21 +62,15 @@ export default function PlanTable() {
         setLoading(false)
     }
 
-    // Search term pakai debounce
     React.useEffect(() => {
         const debounced = debounce(() => {
-            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman 1
-            fetchTemplates().catch(console.error);
-        }, 500);
+            fetchTemplates().catch(console.error)
+        }, 500)
 
-        debounced();
-        return () => debounced.cancel();
-    }, [searchTerm]);
+        debounced()
 
-    // Pagination biasa (tanpa debounce)
-    React.useEffect(() => {
-        fetchTemplates().catch(console.error);
-    }, [pagination]);
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
 
     const columns = getPlanColumns(handleDeletePayment);
@@ -104,12 +98,14 @@ export default function PlanTable() {
         getSortedRowModel: getSortedRowModel(),
     })
 
+
+
     const confirmDelete = async () => {
         if (!selectedId) return
         const res = await deletePlan(selectedId)
         if (res.success) {
             toast.success("Data berhasil dihapus!");
-            await fetchTemplates();
+            setTimeout(() => window.location.reload(), 3000);
 
         } else {
             toast.error(res.message);
@@ -173,29 +169,29 @@ export default function PlanTable() {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    Loading...
+                                </TableCell>
                             </TableRow>
-                        ) : table.getRowModel().rows?.length ? (table.getRowModel().rows.map((row) => (
+                        ) : data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
                         )}
                     </TableBody>
                 </Table>

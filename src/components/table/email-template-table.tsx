@@ -168,21 +168,15 @@ export default function EmailTemplateTable() {
         },
     ]
 
-    // Untuk pencarian (pakai debounce)
     React.useEffect(() => {
         const debounced = debounce(() => {
-            setPagination((prev) => ({ ...prev, pageIndex: 0 })) // reset ke halaman awal
             fetchTemplates().catch(console.error)
         }, 500)
 
         debounced()
-        return () => debounced.cancel()
-    }, [searchTerm])
 
-    // Untuk pagination (langsung fetch)
-    React.useEffect(() => {
-        fetchTemplates().catch(console.error)
-    }, [pagination])
+        return () => debounced.cancel()
+    }, [searchTerm, pagination])
 
     const table = useReactTable({
         data: data,
@@ -302,9 +296,17 @@ export default function EmailTemplateTable() {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="text-center">Loading...</TableCell>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    Loading...
+                                </TableCell>
                             </TableRow>
-                        ) : table.getRowModel().rows?.length ? (
+                        ) : data.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="text-center">
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -312,20 +314,11 @@ export default function EmailTemplateTable() {
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
                         )}
                     </TableBody>
                 </Table>

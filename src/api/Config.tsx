@@ -312,7 +312,12 @@ export async function deletePlan(id: number) {
 // 📩 Master Coupon APIs
 // ====================
 
-export const AllCoupon = async (page: number, size: number, search: string): Promise<{
+export const AllCoupon = async (
+    page: number,
+    size: number,
+    search: string,
+    signal?: AbortSignal // agar bisa dibatalkan jika perlu
+): Promise<{
     data: CouponModal[];
     meta: {
         current_page: number;
@@ -321,22 +326,34 @@ export const AllCoupon = async (page: number, size: number, search: string): Pro
         per_page: number;
         total: number;
         last_page: number;
-    }; total: number } | null> => {
+    };
+    total: number;
+} | null> => {
     try {
         const token = localStorage.getItem("token");
 
-        const response  = await axios.get(`${BASE_URL}/coupon/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
+        const response = await axios.get(`${BASE_URL}/coupon/get-data`, {
+            params: {
+                page,
+                per_page: size,
+                search,
+            },
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            signal, // optional: bisa untuk cancel fetch
         });
 
-        return response.data
-    } catch (error) {
-        console.error(error);
+        return response.data;
+    } catch (error: any) {
+        if (axios.isCancel(error)) {
+            console.warn("Request dibatalkan:", error.message);
+        } else {
+            console.error("Gagal fetch kupon:", error);
+        }
         return null;
     }
-}
+};
 
 export const saveCoupon = async (
     code: string,
