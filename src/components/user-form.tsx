@@ -33,12 +33,12 @@ const UserForm: React.FC<Props> = ({userId}) => {
             email: email,
             phone: phone,
             password: password,
-            switch_email: switchEmail ? "yes" : "",     // tambahkan ini
-            switch_account: switchAccount ? "yes" : "", // tambahkan ini
+            email_verified_at: switchEmail ? "yes" : "",
+            status_user: switchAccount ? "active" : "inactive",
         }
 
         try{
-            const response = userId ? await updateUser(userId, payload.name, payload.email, payload.phone, payload.password, payload.switch_account, payload.switch_email) : "Gagal Update Data"
+            const response = userId ? await updateUser(userId, payload.name, payload.email, payload.phone, payload.password, payload.status_user, payload.email_verified_at) : "Gagal Update Data"
 
             if (response.status) {
                 toast.success(response.message, {
