@@ -31,7 +31,8 @@ export const getSubscriptionColumns = ()
         enableHiding: false,
     },
     {
-        accessorKey: "user_id",
+        accessorKey: "name",
+        accessorFn: row => row.user?.name ?? "",
         header: ({ column }) => {
             return (
                 <Button
@@ -43,7 +44,7 @@ export const getSubscriptionColumns = ()
                 </Button>
             )
         },
-        cell: ({ row }) => <div >{row.getValue("user_id")}</div>,
+        cell: ({ row }) => <div className="capitalize" >{row.getValue("name")}</div>,
     },
 
     {
