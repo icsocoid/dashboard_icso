@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils"
 type ImageUploadProps = {
     onChange: (file: File | null) => void
     value?: File | null
+    imageUrl?: string | null
 }
 
-export function ImageUpload({ onChange, value }: ImageUploadProps) {
+export function ImageUpload({ onChange, value, imageUrl }: ImageUploadProps) {
     const inputRef = React.useRef<HTMLInputElement>(null)
 
     const handleClick = () => {
@@ -48,7 +49,7 @@ export function ImageUpload({ onChange, value }: ImageUploadProps) {
 
             {value && (
                 <img
-                    src={URL.createObjectURL(value)}
+                    src={imageUrl || URL.createObjectURL(value) }
                     alt="Preview"
                     className="mt-1 h-[50px] object-contain"
                 />

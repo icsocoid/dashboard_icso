@@ -27,6 +27,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
 
     const [file, setFile] = React.useState<File | null>(null)
     const [name, setName] = React.useState("")
+    const [urlImage, setUrlImage] = React.useState("")
     const [selectedType, setSelectedType] = React.useState("")
     const [bankName, setBankName] = React.useState("")
     const [bankAccountName, setBankAccountName] = React.useState<string>("")
@@ -65,6 +66,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
                         setBankAccountName(result.bank_detail.account_name)
                         setBankAccountNumber(result.bank_detail.account_number)
                         setDescription(result.description)
+                        setUrlImage(result.urlImage)
 
                     }
                 }finally {
@@ -87,6 +89,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
         formData.append("bank_name", bankName);
         formData.append("account_name", bankAccountName);
         formData.append("account_number", bankAccountNumber);
+        formData.append("description", description);
         formData.append("description", description);
 
         if (file) {
@@ -134,7 +137,7 @@ const DialogAddPayment: React.FC<Props> = ({paymentId, onSuccess}) => {
                 <>
                     <div className="grid gap-4">
                         <div className="grid gap-3">
-                            <ImageUpload value={file} onChange={setFile} />
+                            <ImageUpload value={file} onChange={setFile} imageUrl={urlImage} />
                         </div>
 
                         <div className="grid gap-3">
