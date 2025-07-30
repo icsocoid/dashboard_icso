@@ -53,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Order List",
-        url: "#",
+        url: "/order-list",
         icon: ListIcon,
       },
       {
