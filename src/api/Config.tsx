@@ -6,6 +6,7 @@ import type {CouponModal} from "@/models/coupon.modal.tsx";
 import type {PaymentModel} from "@/models/payment.model.tsx";
 import type {SubscriptionModel} from "@/models/subscription.model.tsx";
 import type {UsersModel} from "@/models/users.model.tsx";
+import type {OrderModel} from "@/models/orders.model";
 
 const BASE_URL_EMAIL = "https://emailapi.als.today/api/email"
 const BASE_URL = "https://als-billing-service.icso.biz.id/api"
@@ -701,3 +702,47 @@ export async function deleteUser(id: number) {
         }
     }
 }
+
+// ====================
+// 📩 Order APIs
+// ====================
+
+export const AllOrders = async (page: number, size: number, search: string): Promise<{
+    data: OrderModel[];
+    meta: {
+        current_page: number;
+        from: number;
+        to: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    };
+    total: number } | null> => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response  = await axios.get(`${BASE_URL}/order/get-data?page=${page}&per_page=${size}&search=${encodeURIComponent(search)}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const getOrderById = async (id: number) => {
+    const token = localStorage.getItem("token");
+    try {
+        const response = await axios.get(`${BASE_URL}/order/detail-data/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
