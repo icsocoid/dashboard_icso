@@ -16,6 +16,7 @@ import EmailView from "@/pages/email/EmailView.tsx";
 import UserPage from "@/pages/user/UserPage.tsx";
 import UserEditPage from "@/pages/user/UserEditPage.tsx";
 import UserViewPage from "@/pages/user/UserViewPage.tsx";
+import OrderPage from "@/pages/order/OrderPage";
 
 const privateRoutes = [
     { path: "/", element: <Dashboard /> },
@@ -34,6 +35,7 @@ const privateRoutes = [
     { path: "/user-management", element: <UserPage /> },
     { path: "/user-management-edit/:id", element: <UserEditPage /> },
     { path: "/user-management-overview/:id", element: <UserViewPage /> },
+    { path: "/order-list", element: <OrderPage /> },
 ]
 
 const App: React.FC = () => {
