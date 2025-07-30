@@ -38,7 +38,7 @@ export default function PlanTable() {
     })
     const [data, setData] = React.useState<Plan[]>([])
     const [totalItems, setTotalItems] = React.useState(0)
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
     const [searchTerm, setSearchTerm] = React.useState("")
 
 

@@ -36,7 +36,7 @@ export default function CouponTable() {
     const [openDialogDelete, setOpenDialogDelete] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
     const [data, setData] = React.useState<CouponModal[]>([])
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 10,
@@ -169,8 +169,7 @@ export default function CouponTable() {
                     + Coupon
                 </Button>
 
-                <Dialog open={openDialog}
-                        key={openDialog ? 'dialog-open' : 'dialog-closed'}
+                <Dialog open={openDialog}  key={openDialog ? 'dialog-open' : 'dialog-closed'}
                         onOpenChange={(val) => {
                             if (!val) {
                                 setEditId(null)

@@ -23,7 +23,7 @@ import {debounce} from "lodash";
 
 export default function PaymentTable() {
     const [data, setData] = React.useState<PaymentModel[]>([])
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 10,
