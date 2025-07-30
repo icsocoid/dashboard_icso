@@ -17,7 +17,7 @@ import {debounce} from "lodash";
 
 export default function SubscriptionTable(){
     const [data, setData] = React.useState<SubscriptionModel[]>([])
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 10,

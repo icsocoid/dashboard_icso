@@ -32,7 +32,7 @@ import {
 
 export default function UsersTable() {
     const [data, setData] = useState<UsersModel[]>([]);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 10,
