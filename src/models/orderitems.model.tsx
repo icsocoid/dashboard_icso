@@ -1,3 +1,5 @@
+import type {Plan} from "@/models/plan.model";
+
 export interface OrderItem {
     id: number,
     order_id: number,
@@ -7,4 +9,5 @@ export interface OrderItem {
     price: number,
     price_type: string,
     item_id: number,
+    plan: Plan
 }

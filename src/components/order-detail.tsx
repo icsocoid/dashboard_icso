@@ -138,7 +138,7 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
                                 <TableBody>
                                     {orderItems?.map((item, index) => (
                                         <TableRow key={index} >
-                                            <TableCell>{item.item_type}</TableCell>
+                                            <TableCell className={"capitalize"}>{item.item_type === "package" ? item.plan.name : "package"}</TableCell>
                                             <TableCell className="text-right">Rp {item.price.toLocaleString("id-ID")}</TableCell>
                                         </TableRow>
                                     ))}
