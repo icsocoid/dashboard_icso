@@ -15,9 +15,9 @@ import {
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import DialogViewOrder from "@/components/dialog/dialog-view-order";
 import {Loader2} from "lucide-react";
-import {Dialog} from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
+
 
 export default function OrderTable() {
     const [loading, setLoading] = useState(true)
@@ -32,9 +32,7 @@ export default function OrderTable() {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [viewId, setViewId] = React.useState<number>()
-    const [openDialog, setOpenDialog] = React.useState<boolean>()
-
+    const navigate = useNavigate();
 
     const fetchData = async () => {
         setLoading(true);
@@ -61,7 +59,7 @@ export default function OrderTable() {
         return () => debounced.cancel()
     }, [search, pagination])
 
-    const columns = getOrdersColumns(setViewId, setOpenDialog)
+    const columns = getOrdersColumns()
 
     const table = useReactTable({
         data: data,
@@ -87,16 +85,6 @@ export default function OrderTable() {
 
     return (
         <div className="w-full">
-
-            <Dialog open={openDialog} key={openDialog ? 'dialog-open' : 'dialog-closed'}
-                    onOpenChange={(val) => {
-                        if (!val) {
-                            setViewId(undefined)
-                            setOpenDialog(false)
-                        }
-                    }} >
-                <DialogViewOrder orderId={viewId} />
-            </Dialog>
 
             <div className="flex items-center py-4">
                 <Input
@@ -148,7 +136,10 @@ export default function OrderTable() {
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}>
+                                    data-state={row.getIsSelected() && "selected"}
+                                    onClick={() => navigate(`/order-view/${row.original.id}`)}
+                                    className={"hover:cursor-pointer"}
+                                >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -8,3 +8,8 @@ export function FormatDate(rawDate: string) {
 export function FormatDateId(rawDate: string) {
     return format(new Date(rawDate), "dd MMMM, yyyy hh:mm a",  { locale: id });
 }
+
+export function FormatDateNoTime(rawDate: string) {
+    return format(new Date(rawDate), "dd MMMM yyyy",  { locale: id });
+
+}

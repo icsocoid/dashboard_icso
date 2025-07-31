@@ -1,15 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import {EyeIcon} from "lucide-react";
 import { type OrderModel } from "@/models/orders.model";
 import { SortableHeader } from "@/components/table/SortableHeader";
-import {FormatDate} from "@/utils/FormatDate";
+import { FormatDateNoTime} from "@/utils/FormatDate";
 
 
 export const getOrdersColumns = (
-    setViewId: (id: number) => void,
-    setOpenDialog: (val: boolean) => void,
 
 ): ColumnDef<OrderModel>[] => [
     {
@@ -44,32 +40,37 @@ export const getOrdersColumns = (
         cell: ({ row }) => <div className={"text-center"}>{row.getValue("order_no")}</div>,
     },
     {
-        accessorKey: "tenant_id",
+        accessorKey: "start_date",
         header: ({ column }) => (
             <div className={"text-center"}>
-                <SortableHeader column={column} title="Penyewa" />
+                <SortableHeader column={column} title="Tanggal Faktur" />
             </div>
         ),
-        cell: ({ row }) => <div className={"text-center"}>{row.getValue("tenant_id")}</div>,
+        cell: ({ row }) => <div className={"text-center"}>{FormatDateNoTime(row.getValue("start_date"))}</div>,
     },
     {
-        accessorKey: "plan",
-        accessorFn: row => row.plan?.name ?? "-",
-        header: ({ column }) => (
-            <div className="text-center">
-                <SortableHeader column={column} title="Jenis Paket" />
-            </div>
-        ),
-        cell: ({ row }) => <div className={"text-center"}>{row.getValue("plan") || "-"}</div>,
-    },
-    {
-        accessorKey: "order_type",
+        accessorKey: "end_date",
         header: ({ column }) => (
             <div className={"text-center"}>
-                <SortableHeader column={column} title="Jenis Pesanan" />
+                <SortableHeader column={column} title="Tanggal Jatuh Tempo" />
             </div>
         ),
-        cell: ({ row }) => <div className={"text-center"}>{row.getValue("order_type")}</div>,
+        cell: ({ row }) => <div className={"text-center"}>{FormatDateNoTime(row.getValue("end_date"))}</div>,
+    },
+    {
+        accessorKey: "amount",
+        header: ({ column }) => (
+            <div className={"text-center"}>
+                <SortableHeader column={column} title="Total" />
+            </div>
+        ),
+        cell: ({ row }) => {
+            const amount = row.getValue("amount") as number;
+            const formatId = amount.toLocaleString("id-ID")
+            return (
+                <div className={"text-center"}>{"Rp " + formatId}</div>
+            )
+        },
     },
     {
         accessorKey: "status",
@@ -90,45 +91,5 @@ export const getOrdersColumns = (
                 </div>
             );
         }
-    },
-    {
-        accessorKey: "amount",
-        header: ({ column }) => (
-            <div className={"text-center"}>
-                <SortableHeader column={column} title="Total" />
-            </div>
-        ),
-        cell: ({ row }) => <div className={"text-center"}>{row.getValue("amount")}</div>,
-    },
-    {
-        accessorKey: "created_at",
-        header: ({ column }) => (
-            <div className={"text-center"}>
-                <SortableHeader column={column} title="Dibuat pada" />
-            </div>
-        ),
-        cell: ({ row }) => <div className={"text-center"}>{FormatDate(row.getValue("created_at"))}</div>,
-    },
-    {
-        id: "actions",
-        header: ({ column }) => (
-            <div className={"text-center"}>
-                <SortableHeader column={column} title="Action" />
-            </div>
-        ),
-        cell: ({ row }) => {
-            const order = row.original;
-
-            return (
-                <div className="flex justify-center">
-                    <Button variant="ghost" onClick={() => {
-                            setViewId(order.id);
-                            setOpenDialog(true);
-                        }} className="flex items-center gap-2" >
-                        <EyeIcon className="h-4 w-4" /> Overview
-                    </Button>
-                </div>
-            );
-        },
     },
 ];
