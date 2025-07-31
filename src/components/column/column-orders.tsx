@@ -58,15 +58,15 @@ export const getOrdersColumns = (
         cell: ({ row }) => <div className={"text-center"}>{FormatDateNoTime(row.getValue("end_date"))}</div>,
     },
     {
-        accessorKey: "amount",
+        accessorKey: "fees_price",
         header: ({ column }) => (
             <div className={"text-center"}>
                 <SortableHeader column={column} title="Total" />
             </div>
         ),
         cell: ({ row }) => {
-            const amount = row.getValue("amount") as number;
-            const formatId = amount.toLocaleString("id-ID")
+            const fees_price = row.getValue("fees_price") as number;
+            const formatId = fees_price.toLocaleString("id-ID")
             return (
                 <div className={"text-center"}>{"Rp " + formatId}</div>
             )

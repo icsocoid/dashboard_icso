@@ -32,6 +32,8 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
     const [tenantId, setTenantId] = useState<string>();
     const [diskon, setDiskon] = useState<number>();
     const [tax, setTax] = useState<number>();
+    const [total, setTotal] = useState<number>();
+    const [subTotal, setSubTotal] = useState<number>();
 
     const DataRowPrice = ({label, value}: {label: string; value: string | number | null | undefined}) => (
         <TableRow>
@@ -63,7 +65,9 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
                         setOrderItems(response.order_items);
                         setTenantId(response.tenant_id);
                         setDiskon(response.discount_amount);
+                        setTotal(response.discountfees_price_amount);
                         setTax(response.tax_amount);
+                        setSubTotal(response.amount);
                     }
                 }finally {
                     setLoading(false)
@@ -140,10 +144,10 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
                                     ))}
                                 </TableBody>
                                 <TableFooter>
-                                    <DataRowPrice label={"Sub Total"} value={"Rp " + diskon?.toLocaleString("id-ID")}/>
+                                    <DataRowPrice label={"Sub Total"} value={"Rp " + subTotal?.toLocaleString("id-ID")}/>
                                     <DataRowPrice label={"Diskon"} value={"Rp " + diskon?.toLocaleString("id-ID")}/>
                                     <DataRowPrice label={"Tax"} value={"Rp " + tax?.toLocaleString("id-ID")}/>
-                                    <DataRowPrice label={"Total"} value={"Rp " + diskon?.toLocaleString("id-ID")}/>
+                                    <DataRowPrice label={"Total"} value={"Rp " + total?.toLocaleString("id-ID")}/>
                                 </TableFooter>
                             </Table>
 
