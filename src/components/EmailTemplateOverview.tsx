@@ -4,7 +4,7 @@ import { getTemplateById } from "@/api/Config.tsx";
 import  { type EditorRef } from "react-email-editor";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SiteHeaderLink } from "@/components/site-header-link";
+import {SiteHeaderBreadcrumb} from "@/components/site-header-breadcrumb";
 
 interface Props {
     templateId?: number;
@@ -47,7 +47,7 @@ const EmailTemplateOverview: React.FC<Props> = ({ templateId }) => {
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
-                <SiteHeaderLink title="Overview Template Email" url="/email-template" />
+                <SiteHeaderBreadcrumb title="Overview" url="/email-template" subtitle={"Email Template"} />
                 <div className="p-4 space-y-4">
                     <div>
                         <p className="font-semibold">Code:</p>

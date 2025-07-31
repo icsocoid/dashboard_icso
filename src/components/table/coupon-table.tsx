@@ -131,7 +131,6 @@ export default function CouponTable() {
 
     return (
         <div className="w-full">
-
             <Dialog open={openDialogDelete}>
                 <DialogContent>
                     <DialogHeader>
@@ -150,6 +149,7 @@ export default function CouponTable() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search..."

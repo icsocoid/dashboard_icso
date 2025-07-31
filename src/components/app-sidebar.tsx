@@ -57,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: ListIcon,
       },
       {
-        title: "Email",
+        title: "Email Template",
         url: "/email-template",
         icon: MailIcon,
       },

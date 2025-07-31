@@ -1,6 +1,3 @@
-import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
-import {AppSidebar} from "@/components/app-sidebar.tsx";
-import {SiteHeaderLink} from "@/components/site-header-link.tsx";
 import React, {useEffect, useState} from "react";
 import {Label} from "@/components/ui/label.tsx";
 import { updateUser} from "@/api/Config.tsx";
@@ -79,10 +76,7 @@ const UserForm: React.FC<Props> = ({userId}) => {
 
 
     return (
-        <SidebarProvider>
-            <AppSidebar variant="inset" />
-            <SidebarInset>
-                <SiteHeaderLink title="User Edit" url="/user-management" />
+        <>
                 {isLoading ? (
                     <div className="flex justify-center py-10">
                         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground"/>
@@ -226,9 +220,8 @@ const UserForm: React.FC<Props> = ({userId}) => {
 
                     </>
                 )}
+        </>
 
-            </SidebarInset>
-        </SidebarProvider>
     );
 }
 

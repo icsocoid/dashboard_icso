@@ -5,9 +5,9 @@ import EmailEditor, { type EditorRef } from 'react-email-editor';
 import {AppSidebar} from "@/components/app-sidebar.tsx";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar.tsx";
 import {toast} from "react-toastify";
-import {SiteHeaderLink} from "@/components/site-header-link.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import { useNavigate } from 'react-router-dom';
+import {SiteHeaderBreadcrumb} from "@/components/site-header-breadcrumb";
 
 interface Props {
     templateId?: number;
@@ -70,7 +70,8 @@ const EmailTemplateEditor: React.FC<Props> = ({ templateId }) => {
         <SidebarProvider>
             <AppSidebar variant="inset" />
             <SidebarInset>
-                <SiteHeaderLink title={templateId ? "Edit Email Template" : "Create Email Template"} url={"/email-template"} />
+                <SiteHeaderBreadcrumb title={templateId ? "Edit Email Template" : "Create Email Template"}
+                                      url={"/email-template"} subtitle={'Email Template'} />
 
                 <div style={{ padding: 20 }}>
                     <TemplateForm

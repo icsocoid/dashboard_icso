@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import type {UsersModel} from "@/models/users.model.tsx";
 import {useNavigate} from "react-router-dom";
+import {FormatDate} from "@/utils/FormatDate";
 
 
 export const getUsersColumns = (
@@ -43,6 +44,7 @@ export const getUsersColumns = (
         header: ({ column }) => {
             return (
                 <Button
+                    className={"flex justify-center items-center gap-1 w-full text-center"}
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -51,13 +53,13 @@ export const getUsersColumns = (
                 </Button>
             )
         },
-        cell: ({ row }) => <div>{row.getValue("name")}</div>,
+        cell: ({ row }) => <div className={'text-center'}>{row.getValue("name")}</div>,
     },
     {
         accessorKey: "phone",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className={"flex justify-center items-center gap-1 w-full text-center"}
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -67,7 +69,7 @@ export const getUsersColumns = (
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("phone")}</div>
+            <div className="capitalize text-center">{row.getValue("phone") ? row.getValue("phone") : '-'}</div>
         ),
     },
     {
@@ -75,6 +77,7 @@ export const getUsersColumns = (
         header: ({ column }) => {
             return (
                 <Button
+                    className={"flex justify-center items-center gap-1 w-full text-center"}
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -84,14 +87,14 @@ export const getUsersColumns = (
             )
         },
         cell: ({ row }) => (
-            <div >{row.getValue("email")}</div>
+            <div className={'text-center'}>{row.getValue("email")}</div>
         ),
     },
     {
         accessorKey: "company_name",
         header: ({ column }) => {
             return (
-                <Button
+                <Button className={"flex justify-center items-center gap-1 w-full text-center"}
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -101,7 +104,7 @@ export const getUsersColumns = (
             )
         },
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("company_name")}</div>
+            <div className="capitalize text-center">{row.getValue("company_name")}</div>
         ),
     },
 
@@ -109,10 +112,8 @@ export const getUsersColumns = (
         accessorKey: "email_verified_at",
         header: ({ column }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
+                <Button variant="ghost" className={"flex justify-center items-center gap-1 w-full text-center"}
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
                     Verifikasi Email
                     <ArrowUpDown />
                 </Button>
@@ -120,7 +121,7 @@ export const getUsersColumns = (
         },
         cell: ({ row }) => {
             if (row.getValue("email_verified_at") !== null) {
-                return (<div className="capitalize text-center">{row.getValue("email_verified_at")}</div>)
+                return (<div className="capitalize text-center">{FormatDate(row.getValue("email_verified_at"))}</div>)
             }else{
                 return (<div className="capitalize text-center"> - </div>)
 
@@ -133,6 +134,7 @@ export const getUsersColumns = (
         header: ({ column }) => {
             return (
                 <Button
+                    className={"flex justify-center items-center gap-1 w-full text-center"}
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
@@ -145,20 +147,23 @@ export const getUsersColumns = (
         cell: ({ row }) => {
             const status:string  = row.getValue("status_user")
             return (
-                <div
-                    className={`inline-flex items-center  px-3 py-1 rounded-full text-white text-sm font-semibold ${
-                        status ===  "active" ? 'bg-green-500' : 'bg-red-400'
-                    }`}
-                >
-                    {status === "active" ? 'Active' : 'Inactive'}
+                <div className="w-full flex justify-center">
+                    <span
+                        className={`inline-flex items-center  px-3 py-1 rounded-full text-white text-sm font-semibold ${
+                            status ===  "active" ? 'bg-green-500' : 'bg-red-400'
+                        }`}
+                    >
+                        {status === "active" ? 'Active' : 'Inactive'}
+                    </span>
                 </div>
             )
         },
     },
     {
         accessorKey: "created_at",
+        header: () => <div className={"flex justify-center items-center gap-1 w-full text-center"}>Tanggal Dibuat</div>,
         cell: ({row}) => (
-            <div className="capitalize">{row.getValue("created_at")}</div>
+            <div className="capitalize text-center">{row.getValue("created_at")}</div>
         ),
     },
     {
