@@ -65,7 +65,7 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
                         setOrderItems(response.order_items);
                         setTenantId(response.tenant_id);
                         setDiskon(response.discount_amount);
-                        setTotal(response.discountfees_price_amount);
+                        setTotal(response.fees_price);
                         setTax(response.tax_amount);
                         setSubTotal(response.amount);
                     }
