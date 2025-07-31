@@ -83,7 +83,7 @@ const OrderDetail: React.FC<Props> = ({ orderId }) => {
                     <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                <div className="grid grid-cols-1 xl:grid-cols-3 space-y-4 xl:space-y-0 xl:gap-3 items-start">
                     <Card className={""}>
                         <CardHeader>
                             <CardTitle className="font-semibold capitalize">
